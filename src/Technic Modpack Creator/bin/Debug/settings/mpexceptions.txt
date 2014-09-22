@@ -1,0 +1,9 @@
+damageindicator
+bacr
+neiplugins
+minimap
+inventorytweaks
+animationapi
+mapwriter
+dynamiclights
+shatter

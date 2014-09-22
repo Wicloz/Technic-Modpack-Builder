@@ -1,0 +1,10 @@
+D:\Projects\Technic Modpack Creator\Technic Modpack Creator\bin\Debug\Technic Modpack Creator.exe.config
+D:\Projects\Technic Modpack Creator\Technic Modpack Creator\obj\Debug\Technic Modpack Creator.csprojResolveAssemblyReference.cache
+D:\Projects\Technic Modpack Creator\Technic Modpack Creator\obj\Debug\Technic_Modpack_Creator.Properties.Resources.resources
+D:\Projects\Technic Modpack Creator\Technic Modpack Creator\obj\Debug\Technic Modpack Creator.csproj.GenerateResource.Cache
+D:\Projects\Technic Modpack Creator\Technic Modpack Creator\bin\Debug\Technic Modpack Creator.exe
+D:\Projects\Technic Modpack Creator\Technic Modpack Creator\bin\Debug\Technic Modpack Creator.pdb
+D:\Projects\Technic Modpack Creator\Technic Modpack Creator\obj\Debug\Technic Modpack Creator.exe
+D:\Projects\Technic Modpack Creator\Technic Modpack Creator\obj\Debug\Technic Modpack Creator.pdb
+D:\Projects\Technic Modpack Creator\Technic Modpack Creator\obj\Debug\Technic_Modpack_Creator.Main.resources
+D:\Projects\Technic Modpack Creator\Technic Modpack Creator\obj\Debug\Technic_Modpack_Creator.Startup.resources
