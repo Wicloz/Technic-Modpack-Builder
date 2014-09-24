@@ -10,5 +10,4 @@ ECHO Backing up world ...
 rmdir backups\backup_after /Q /S
 robocopy world backups\backup_after /e
 
-pause
 exit
