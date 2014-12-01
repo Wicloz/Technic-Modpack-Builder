@@ -62,6 +62,7 @@ namespace Technic_Modpack_Creator
         public void DoneTesting ()
         {
             Directory.Delete(cd + "\\modpack\\config", true);
+            Directory.CreateDirectory(cd + "\\modpack\\config");
 
             if (File.Exists(appdata + "\\.technic\\modpacks\\vanilla\\options.txt"))
             {

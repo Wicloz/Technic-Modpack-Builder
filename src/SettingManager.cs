@@ -21,10 +21,7 @@ namespace Technic_Modpack_Creator
         {
             if (File.Exists(cd + "\\settings\\settings.cfg"))
             {
-                FileStream fs = File.Open(cd + "\\settings\\settings.cfg", FileMode.Open, FileAccess.ReadWrite);
-                BinaryFormatter bf = new BinaryFormatter();
-                SettingData data = (SettingData)bf.Deserialize(fs);
-                fs.Close();
+                SettingData data = SaveLoad.LoadFileXml<SettingData>(cd + "\\settings\\settings.cfg");
 
                 minecraftVersionLoad = data.minecraftVersion;
                 modpackVersionLoad = data.modpackVersion;
@@ -44,11 +41,7 @@ namespace Technic_Modpack_Creator
 
         public void SaveSettings(string MinecraftVersion, string ModpackVersion, string Name, string Location)
         {
-            FileStream fs = File.Create(cd + "\\settings\\settings.cfg");
-            BinaryFormatter bf = new BinaryFormatter();
-
-            bf.Serialize(fs, new SettingData(MinecraftVersion, ModpackVersion, Name, Location));
-            fs.Close();
+            SaveLoad.SaveFileXml(new SettingData(MinecraftVersion, ModpackVersion, Name, Location), cd + "\\settings\\settings.cfg");
         }
     }
 
@@ -59,6 +52,9 @@ namespace Technic_Modpack_Creator
         public string modpackVersion;
         public string name;
         public string location;
+
+        public SettingData()
+        { }
 
         public SettingData(string MinecraftVersion, string ModpackVersion, string Name, string Location)
         {

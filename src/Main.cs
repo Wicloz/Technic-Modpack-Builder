@@ -59,15 +59,18 @@ namespace Technic_Modpack_Creator
         {
             if (testModeA == 1)
             {
-                testButtonClient.Text = "Done Testing";
-                buildButton.Enabled = false;
-                setupButton.Enabled = false;
-                testModeA = 2;
+                if (PreClientCheck())
+                {
+                    testButtonClient.Text = "Done Testing";
+                    buildButton.Enabled = false;
+                    setupButton.Enabled = false;
+                    testModeA = 2;
 
-                MakeLowerCases();
-//                MergeModpackJar();
+                    MakeLowerCases();
+                    //MergeModpackJar();
 
-                testClient.StartTesting();
+                    testClient.StartTesting();
+                }
             }
             else if (testModeA == 2)
             {
@@ -85,12 +88,15 @@ namespace Technic_Modpack_Creator
         {
             if (testModeB == 1)
             {
-                testButtonServer.Text = "Done Testing";
-                buildButton.Enabled = false;
-                testModeB = 2;
+                if (PreServerCheck())
+                {
+                    testButtonServer.Text = "Done Testing";
+                    buildButton.Enabled = false;
+                    testModeB = 2;
 
-                testServer.BuildServer(modpackVersionBox.Text);
-                testServer.RunServer();
+                    testServer.BuildServer(modpackVersionBox.Text);
+                    testServer.RunServer();
+                }
             }
             else if (testModeB == 2)
             {
@@ -104,18 +110,21 @@ namespace Technic_Modpack_Creator
 
         private void buildButton_Click(object sender, EventArgs e)
         {
-            MakeLowerCases();
-            MergeModpackJar();
-            testServer.BuildServer(modpackVersionBox.Text);
+            if (PreClientCheck() && PreServerCheck())
+            {
+                MakeLowerCases();
+                MergeModpackJar();
+                testServer.BuildServer(modpackVersionBox.Text);
 
-            MakeModList();
-            buildPack.CreateZipFiles();
-            buildPack.CopyZipFiles(folderBox.Text, modpackVersionBox.Text);
+                MakeModList();
+                buildPack.CreateZipFiles();
+                buildPack.CopyZipFiles(folderBox.Text, modpackVersionBox.Text);
 
-            RestoreModpackJar();
-            testServer.DoneTesting();
+                RestoreModpackJar();
+                testServer.DoneTesting();
 
-            OpenSite();
+                OpenSite();
+            }
         }
 
         private void setupButton_Click(object sender, EventArgs e)
@@ -218,10 +227,36 @@ namespace Technic_Modpack_Creator
             }
         }
 
+        private bool PreClientCheck ()
+        {
+            if (Directory.GetFiles(cd + "\\plugins\\forgemodloader", "*forge*.jar").Length <= 0)
+            {
+                MessageBox.Show("Download a version of Minecraft Forge first!", "ERROR!");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool PreServerCheck()
+        {
+            if (Directory.GetFiles(cd + "\\plugins\\server_template", "minecraft_server*.jar").Length <= 0)
+            {
+                MessageBox.Show("Download the minecraft_server.jar first!", "ERROR!");
+                return false;
+            }
+
+            return true;
+        }
+
         private void getForgeButton_Click(object sender, EventArgs e)
         {
             switch (minecraftVersionBox.Text)
             {
+                case "1.8.1":
+                    Process.Start("http://files.minecraftforge.net/minecraftforge//1.8");
+                    break;
+
                 case "1.8.0":
                      Process.Start("http://files.minecraftforge.net/minecraftforge//1.8");
                     break;
@@ -230,6 +265,40 @@ namespace Technic_Modpack_Creator
                     Process.Start("http://files.minecraftforge.net/");
                     break;
             }
+        }
+
+        private void getServerButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (minecraftVersionBox.Text.Substring(1, 1) == "." && minecraftVersionBox.Text.Substring(3, 1) == ".")
+                {
+                    Process.Start("https://s3.amazonaws.com/Minecraft.Download/versions/" + minecraftVersionBox.Text + "/minecraft_server." + minecraftVersionBox.Text + ".jar");
+                }
+                else
+                {
+                    Process.Start("https://mcversions.net/");
+                }
+            }
+            catch
+            {
+                Process.Start("https://mcversions.net/");
+            }
+        }
+
+        private void manageModsButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void openModpackFolder_Click(object sender, EventArgs e)
+        {
+            Process.Start(appdata + "\\.technic\\modpacks\\vanilla");
+        }
+
+        private void openThisFolder_Click(object sender, EventArgs e)
+        {
+            Process.Start(cd);
         }
     }
 }

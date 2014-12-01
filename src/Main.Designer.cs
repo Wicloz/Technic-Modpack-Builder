@@ -43,6 +43,10 @@
             this.label4 = new System.Windows.Forms.Label();
             this.setupButton = new System.Windows.Forms.Button();
             this.getForgeButton = new System.Windows.Forms.Button();
+            this.manageModsButton = new System.Windows.Forms.Button();
+            this.openModpackFolder = new System.Windows.Forms.Button();
+            this.getServerButton = new System.Windows.Forms.Button();
+            this.openThisFolder = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // testButtonClient
@@ -57,7 +61,7 @@
             // 
             // buildButton
             // 
-            this.buildButton.Location = new System.Drawing.Point(12, 245);
+            this.buildButton.Location = new System.Drawing.Point(12, 220);
             this.buildButton.Name = "buildButton";
             this.buildButton.Size = new System.Drawing.Size(260, 55);
             this.buildButton.TabIndex = 1;
@@ -102,7 +106,7 @@
             // 
             // folderBox
             // 
-            this.folderBox.Location = new System.Drawing.Point(101, 219);
+            this.folderBox.Location = new System.Drawing.Point(101, 194);
             this.folderBox.Name = "folderBox";
             this.folderBox.Size = new System.Drawing.Size(171, 20);
             this.folderBox.TabIndex = 8;
@@ -110,7 +114,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 222);
+            this.label3.Location = new System.Drawing.Point(12, 197);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(83, 13);
             this.label3.TabIndex = 9;
@@ -124,7 +128,7 @@
             "1.6.4",
             "1.7.2",
             "1.7.10",
-            "1.8.0"});
+            "1.8.1"});
             this.minecraftVersionBox.Location = new System.Drawing.Point(111, 13);
             this.minecraftVersionBox.Name = "minecraftVersionBox";
             this.minecraftVersionBox.Size = new System.Drawing.Size(161, 21);
@@ -133,7 +137,7 @@
             // textBox1
             // 
             this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(278, 72);
+            this.textBox1.Location = new System.Drawing.Point(278, 43);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(248, 232);
@@ -168,19 +172,63 @@
             // 
             // getForgeButton
             // 
-            this.getForgeButton.Location = new System.Drawing.Point(278, 43);
+            this.getForgeButton.Location = new System.Drawing.Point(532, 250);
             this.getForgeButton.Name = "getForgeButton";
-            this.getForgeButton.Size = new System.Drawing.Size(248, 23);
+            this.getForgeButton.Size = new System.Drawing.Size(152, 23);
             this.getForgeButton.TabIndex = 15;
             this.getForgeButton.Text = "Get Minecraft Forge";
             this.getForgeButton.UseVisualStyleBackColor = true;
             this.getForgeButton.Click += new System.EventHandler(this.getForgeButton_Click);
             // 
+            // manageModsButton
+            // 
+            this.manageModsButton.Location = new System.Drawing.Point(533, 13);
+            this.manageModsButton.Name = "manageModsButton";
+            this.manageModsButton.Size = new System.Drawing.Size(151, 43);
+            this.manageModsButton.TabIndex = 16;
+            this.manageModsButton.Text = "Manage Mods";
+            this.manageModsButton.UseVisualStyleBackColor = true;
+            this.manageModsButton.Click += new System.EventHandler(this.manageModsButton_Click);
+            // 
+            // openModpackFolder
+            // 
+            this.openModpackFolder.Location = new System.Drawing.Point(533, 62);
+            this.openModpackFolder.Name = "openModpackFolder";
+            this.openModpackFolder.Size = new System.Drawing.Size(151, 23);
+            this.openModpackFolder.TabIndex = 17;
+            this.openModpackFolder.Text = "Open Testing Folder";
+            this.openModpackFolder.UseVisualStyleBackColor = true;
+            this.openModpackFolder.Click += new System.EventHandler(this.openModpackFolder_Click);
+            // 
+            // getServerButton
+            // 
+            this.getServerButton.Location = new System.Drawing.Point(532, 221);
+            this.getServerButton.Name = "getServerButton";
+            this.getServerButton.Size = new System.Drawing.Size(152, 23);
+            this.getServerButton.TabIndex = 18;
+            this.getServerButton.Text = "Get Minecraft Server Jar";
+            this.getServerButton.UseVisualStyleBackColor = true;
+            this.getServerButton.Click += new System.EventHandler(this.getServerButton_Click);
+            // 
+            // openThisFolder
+            // 
+            this.openThisFolder.Location = new System.Drawing.Point(533, 92);
+            this.openThisFolder.Name = "openThisFolder";
+            this.openThisFolder.Size = new System.Drawing.Size(151, 23);
+            this.openThisFolder.TabIndex = 19;
+            this.openThisFolder.Text = "Open Creation Folder";
+            this.openThisFolder.UseVisualStyleBackColor = true;
+            this.openThisFolder.Click += new System.EventHandler(this.openThisFolder_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(538, 312);
+            this.ClientSize = new System.Drawing.Size(696, 285);
+            this.Controls.Add(this.openThisFolder);
+            this.Controls.Add(this.getServerButton);
+            this.Controls.Add(this.openModpackFolder);
+            this.Controls.Add(this.manageModsButton);
             this.Controls.Add(this.getForgeButton);
             this.Controls.Add(this.setupButton);
             this.Controls.Add(this.label4);
@@ -223,6 +271,10 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button setupButton;
         private System.Windows.Forms.Button getForgeButton;
+        private System.Windows.Forms.Button manageModsButton;
+        private System.Windows.Forms.Button openModpackFolder;
+        private System.Windows.Forms.Button getServerButton;
+        private System.Windows.Forms.Button openThisFolder;
     }
 }
 
