@@ -20,7 +20,18 @@ namespace Technic_Modpack_Creator
         {
             if (Directory.Exists(cd + "\\tests\\ServerBuild"))
             {
-                Directory.Delete(cd + "\\tests\\ServerBuild", true);
+                bool succes = false;
+
+                while (!succes)
+                {
+                    try
+                    {
+                        Directory.Delete(cd + "\\tests\\ServerBuild", true);
+                        succes = true;
+                    }
+                    catch
+                    { }
+                }
             }
 
             foreach (string file in Directory.GetFiles(cd + "\\plugins\\server_template", "*.*", SearchOption.AllDirectories))
@@ -43,25 +54,25 @@ namespace Technic_Modpack_Creator
             List<string> fileList = new List<string>();
             List<string> exceptionList = new List<string>();
 
-            FileStream fs = File.Open(cd + "\\settings\\mpexceptions.txt", FileMode.Open);
-            StreamReader sr = new StreamReader(fs);
-
-            while (true)
+            using (FileStream fs = File.Open(cd + "\\settings\\mpexceptions.txt", FileMode.Open))
             {
-                string nextLine = sr.ReadLine();
+                using (StreamReader sr = new StreamReader(fs))
+                {
+                    while (true)
+                    {
+                        string nextLine = sr.ReadLine();
 
-                if (nextLine != null)
-                {
-                    exceptionList.Add(nextLine);
-                }
-                else
-                {
-                    break;
+                        if (nextLine != null)
+                        {
+                            exceptionList.Add(nextLine);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
             }
-
-            fs.Close();
-            sr.Dispose();
 
             foreach (string file in Directory.GetFiles(cd + "\\modpack", "*.*", SearchOption.AllDirectories))
             {
@@ -96,13 +107,21 @@ namespace Technic_Modpack_Creator
             }
         }
 
+        public void DeleteBackupper()
+        {
+            if (File.Exists(cd + "\\tests\\ServerBuild\\BackUpper.bat"))
+            {
+                File.Delete(cd + "\\tests\\ServerBuild\\BackUpper.bat");
+            }
+        }
+
         public void RunServer()
         {
             Process server = new Process();
 
             server.StartInfo.FileName = "java.exe";
             server.StartInfo.WorkingDirectory = cd + "\\tests\\ServerBuild";
-            server.StartInfo.Arguments = "-XX:PermSize=128m -jar modpack.jar nogui";
+            server.StartInfo.Arguments = "-XX:PermSize=256m -jar modpack.jar nogui";
 
             server.EnableRaisingEvents = true;
             server.Exited += new EventHandler(server_Exited);
@@ -125,7 +144,18 @@ namespace Technic_Modpack_Creator
                 File.Copy(properties1, properties2);
             }
 
-            Directory.Delete(cd + "\\tests\\ServerBuild", true);
+            bool succeed = false;
+
+            while (!succeed)
+            {
+                try
+                {
+                    Directory.Delete(cd + "\\tests\\ServerBuild", true);
+                    succeed = true;
+                }
+                catch
+                { }
+            }
         }
 
         private void server_Exited(object sender, EventArgs e)

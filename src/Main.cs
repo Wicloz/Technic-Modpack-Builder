@@ -42,17 +42,13 @@ namespace Technic_Modpack_Creator
             modpackVersionBox.Text = settings.modpackVersionLoad;
             siteBox.Text = settings.nameLoad;
             folderBox.Text = settings.locationLoad;
+            includeOptionsBox.Checked = settings.includeOptionsLoad;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            settings.SaveSettings(minecraftVersionBox.Text, modpackVersionBox.Text, siteBox.Text, folderBox.Text);
-            RestoreModpackJar();
-
-            if (Directory.Exists(cd + "\\temp"))
-            {
-                Directory.Delete(cd + "\\temp", true);
-            }
+            settings.SaveSettings(minecraftVersionBox.Text, modpackVersionBox.Text, siteBox.Text, folderBox.Text, includeOptionsBox.Checked);
+            DeleteTempFolder();
         }
 
         private void testButtonClient_Click(object sender, EventArgs e)
@@ -67,14 +63,19 @@ namespace Technic_Modpack_Creator
                     testModeA = 2;
 
                     MakeLowerCases();
-                    //MergeModpackJar();
+                    MergeModpackJar();
 
-                    testClient.StartTesting();
+                    if (!testClient.StartTesting())
+                    {
+                        testButtonClient.Text = "Test Modpack Client";
+                        buildButton.Enabled = true;
+                        setupButton.Enabled = true;
+                        testModeA = 1;
+                    }
                 }
             }
             else if (testModeA == 2)
             {
-                RestoreModpackJar();
                 testClient.DoneTesting();
 
                 testButtonClient.Text = "Test Modpack Client";
@@ -94,8 +95,11 @@ namespace Technic_Modpack_Creator
                     buildButton.Enabled = false;
                     testModeB = 2;
 
+                    MakeLowerCases();
+
                     testServer.BuildServer(modpackVersionBox.Text);
-                    testServer.RunServer();
+                    testServer.DeleteBackupper();
+                    //testServer.RunServer();
                 }
             }
             else if (testModeB == 2)
@@ -120,7 +124,6 @@ namespace Technic_Modpack_Creator
                 buildPack.CreateZipFiles();
                 buildPack.CopyZipFiles(folderBox.Text, modpackVersionBox.Text);
 
-                RestoreModpackJar();
                 testServer.DoneTesting();
 
                 OpenSite();
@@ -139,14 +142,14 @@ namespace Technic_Modpack_Creator
             launcher.StartInfo.Arguments = "";
             launcher.Start();
 
-            MessageBox.Show("Do this:\n1) Select 'Minecraft'.\n2) Click the cog under the picture.\n3) Select the build that matches the version of your modpack and click save.\n4) Close the option screen and press play.\n5) After Minecraft has finished downloading and started, close it.", "Do These Things !!!");
+            MessageBox.Show("Do this:\n1) Select 'Vanilla' in the list on the left under 'Modpacks'.\n2) Click 'Modpack Options' (not 'Launcher Options') in the upper right corner.\n3) Select the version that matches the version of your modpack under 'A Specific Version' and click on 'Reinstall Pack'.\n4) Accept the dialog box, close the option screen and press 'Install'.\n5) After Minecraft has finished downloading, press 'Start'.\n6) After minecraft started, close it again.\n7) Done!", "Do These Things !!!");
         }
 
         private void OpenSite()
         {
             if (siteBox.Text != "")
             {
-                Process.Start("http://www.technicpack.net/modpack/details/" + siteBox.Text + "/edit");
+                Process.Start("http://www.technicpack.net/" + siteBox.Text);
             }
         }
 
@@ -176,17 +179,20 @@ namespace Technic_Modpack_Creator
 
         private void MergeModpackJar()
         {
+            DeleteTempFolder();
+
             Directory.CreateDirectory(cd + "\\temp");
-            File.Move(cd + "\\modpack\\bin\\modpack.jar", cd + "\\temp\\modpack.jar");
+            File.Delete(cd + "\\plugins\\mergedjar\\modpack.jar");
 
             foreach (string file in Directory.GetFiles(cd + "\\plugins\\forgemodloader", "*forge*.jar"))
             {
-                File.Copy(file, cd + "\\modpack\\bin\\modpack.jar");
+                File.Copy(file, cd + "\\plugins\\mergedjar\\modpack.jar");
+                break;
             }
 
-            ZipFile.ExtractToDirectory(cd + "\\temp\\modpack.jar", cd + "\\temp\\extract");
+            ZipFile.ExtractToDirectory(cd + "\\modpack\\bin\\modpack.jar", cd + "\\temp\\extract");
 
-            using (Ionic.Zip.ZipFile jar = Ionic.Zip.ZipFile.Read(cd + "\\modpack\\bin\\modpack.jar"))
+            using (Ionic.Zip.ZipFile jar = Ionic.Zip.ZipFile.Read(cd + "\\plugins\\mergedjar\\modpack.jar"))
             {
                 if (Directory.GetFiles(cd + "\\temp\\extract", "*.*", SearchOption.AllDirectories).Length > 0)
                 {
@@ -199,17 +205,28 @@ namespace Technic_Modpack_Creator
                         jar.AddFile(file, file.Replace(Path.GetFileName(file), "").Replace(cd + "\\temp\\extract", ""));
                     }
 
-                    jar.Save();
+                    bool succeed = false;
+
+                    while (!succeed)
+                    {
+                        try
+                        {
+                            jar.Save();
+                            succeed = true;
+                        }
+                        catch
+                        { }
+                    }
                 }
             }
+
+            DeleteTempFolder();
         }
 
-        private void RestoreModpackJar()
+        private void DeleteTempFolder()
         {
-            if (File.Exists(cd + "\\temp\\modpack.jar"))
+            if (Directory.Exists(cd + "\\temp"))
             {
-                File.Delete(cd + "\\modpack\\bin\\modpack.jar");
-                File.Move(cd + "\\temp\\modpack.jar", cd + "\\modpack\\bin\\modpack.jar");
                 Directory.Delete(cd + "\\temp", true);
             }
         }
@@ -218,12 +235,34 @@ namespace Technic_Modpack_Creator
         {
             foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods", "*.zip", SearchOption.AllDirectories))
             {
-                File.Move(file, file.ToLower());
+                bool succes = false;
+
+                while (!succes)
+                {
+                    try
+                    {
+                        File.Move(file, file.ToLower());
+                        succes = true;
+                    }
+                    catch
+                    { }
+                }
             }
 
             foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods", "*.jar", SearchOption.AllDirectories))
             {
-                File.Move(file, file.ToLower());
+                bool succes = false;
+
+                while (!succes)
+                {
+                    try
+                    {
+                        File.Move(file, file.ToLower());
+                        succes = true;
+                    }
+                    catch
+                    { }
+                }
             }
         }
 

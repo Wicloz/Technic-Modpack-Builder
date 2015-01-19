@@ -14,6 +14,7 @@ namespace Technic_Modpack_Creator
         public string modpackVersionLoad;
         public string nameLoad;
         public string locationLoad;
+        public bool includeOptionsLoad;
 
         private string cd = Directory.GetCurrentDirectory();
 
@@ -27,6 +28,7 @@ namespace Technic_Modpack_Creator
                 modpackVersionLoad = data.modpackVersion;
                 nameLoad = data.name;
                 locationLoad = data.location;
+                includeOptionsLoad = data.includeOptions;
             }
             else
             {
@@ -34,14 +36,15 @@ namespace Technic_Modpack_Creator
                 modpackVersionLoad = "";
                 nameLoad = "";
                 locationLoad = "";
+                includeOptionsLoad = false;
 
-                SaveSettings(minecraftVersionLoad, modpackVersionLoad, nameLoad, locationLoad);
+                SaveSettings(minecraftVersionLoad, modpackVersionLoad, nameLoad, locationLoad, includeOptionsLoad);
             }
         }
 
-        public void SaveSettings(string MinecraftVersion, string ModpackVersion, string Name, string Location)
+        public void SaveSettings(string MinecraftVersion, string ModpackVersion, string Name, string Location, bool IncludeOptions)
         {
-            SaveLoad.SaveFileXml(new SettingData(MinecraftVersion, ModpackVersion, Name, Location), cd + "\\settings\\settings.cfg");
+            SaveLoad.SaveFileXml(new SettingData(MinecraftVersion, ModpackVersion, Name, Location, IncludeOptions), cd + "\\settings\\settings.cfg");
         }
     }
 
@@ -52,16 +55,18 @@ namespace Technic_Modpack_Creator
         public string modpackVersion;
         public string name;
         public string location;
+        public bool includeOptions;
 
         public SettingData()
         { }
 
-        public SettingData(string MinecraftVersion, string ModpackVersion, string Name, string Location)
+        public SettingData(string MinecraftVersion, string ModpackVersion, string Name, string Location, bool IncludeOptions)
         {
             minecraftVersion = MinecraftVersion;
             modpackVersion = ModpackVersion;
             name = Name;
             location = Location;
+            includeOptions = IncludeOptions;
         }
     }
 }

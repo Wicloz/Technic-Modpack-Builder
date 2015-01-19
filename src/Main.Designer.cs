@@ -47,6 +47,7 @@
             this.openModpackFolder = new System.Windows.Forms.Button();
             this.getServerButton = new System.Windows.Forms.Button();
             this.openThisFolder = new System.Windows.Forms.Button();
+            this.includeOptionsBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // testButtonClient
@@ -140,7 +141,7 @@
             this.textBox1.Location = new System.Drawing.Point(278, 43);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(248, 232);
+            this.textBox1.Size = new System.Drawing.Size(248, 256);
             this.textBox1.TabIndex = 11;
             this.textBox1.Text = resources.GetString("textBox1.Text");
             // 
@@ -172,7 +173,7 @@
             // 
             // getForgeButton
             // 
-            this.getForgeButton.Location = new System.Drawing.Point(532, 250);
+            this.getForgeButton.Location = new System.Drawing.Point(532, 276);
             this.getForgeButton.Name = "getForgeButton";
             this.getForgeButton.Size = new System.Drawing.Size(152, 23);
             this.getForgeButton.TabIndex = 15;
@@ -202,7 +203,7 @@
             // 
             // getServerButton
             // 
-            this.getServerButton.Location = new System.Drawing.Point(532, 221);
+            this.getServerButton.Location = new System.Drawing.Point(532, 247);
             this.getServerButton.Name = "getServerButton";
             this.getServerButton.Size = new System.Drawing.Size(152, 23);
             this.getServerButton.TabIndex = 18;
@@ -220,11 +221,22 @@
             this.openThisFolder.UseVisualStyleBackColor = true;
             this.openThisFolder.Click += new System.EventHandler(this.openThisFolder_Click);
             // 
+            // includeOptionsBox
+            // 
+            this.includeOptionsBox.AutoSize = true;
+            this.includeOptionsBox.Location = new System.Drawing.Point(12, 281);
+            this.includeOptionsBox.Name = "includeOptionsBox";
+            this.includeOptionsBox.Size = new System.Drawing.Size(114, 17);
+            this.includeOptionsBox.TabIndex = 20;
+            this.includeOptionsBox.Text = "Include Options.txt";
+            this.includeOptionsBox.UseVisualStyleBackColor = true;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(696, 285);
+            this.ClientSize = new System.Drawing.Size(696, 311);
+            this.Controls.Add(this.includeOptionsBox);
             this.Controls.Add(this.openThisFolder);
             this.Controls.Add(this.getServerButton);
             this.Controls.Add(this.openModpackFolder);
@@ -275,6 +287,7 @@
         private System.Windows.Forms.Button openModpackFolder;
         private System.Windows.Forms.Button getServerButton;
         private System.Windows.Forms.Button openThisFolder;
+        public System.Windows.Forms.CheckBox includeOptionsBox;
     }
 }
 

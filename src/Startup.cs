@@ -24,7 +24,7 @@ namespace Technic_Modpack_Creator
 
         private string[] labelText = {
                                         "Creating Directory's ...",
-                                        "Moving Files ...",
+                                        "Cleaning Up ...",
                                         "Creating Files ...",
                                         "Downloading TechnicLauncher ...",
                                         "Downloading Server Files ..."
@@ -88,7 +88,7 @@ namespace Technic_Modpack_Creator
 
             else if (stuffIndex == 1)
             {
-                stuff = new Thread(MoveFiles);
+                stuff = new Thread(Cleanup);
                 stuff.Start();
 
                 return;
@@ -145,13 +145,16 @@ namespace Technic_Modpack_Creator
             Directory.CreateDirectory(cd + "\\plugins\\forgemodloader");
             Directory.CreateDirectory(cd + "\\plugins\\idfixer");
             Directory.CreateDirectory(cd + "\\plugins\\server_template");
+            Directory.CreateDirectory(cd + "\\plugins\\mergedjar");
 
-            Directory.CreateDirectory(cd + "\\export\\texturepack");
             Directory.CreateDirectory(cd + "\\export\\modlist");
             Directory.CreateDirectory(cd + "\\export\\icons");
+            Directory.CreateDirectory(cd + "\\export\\zipfiles");
 
             Directory.CreateDirectory(cd + "\\settings");
             Directory.CreateDirectory(cd + "\\tests\\ClientBuild");
+
+            Directory.CreateDirectory(cd + "\\resourcepack\\addons");
 
             taskDone = true;
         }
@@ -160,7 +163,7 @@ namespace Technic_Modpack_Creator
         {
             if (!File.Exists(cd + "\\settings\\mpexceptions.txt"))
             {
-                File.WriteAllText(cd + "\\settings\\mpexceptions.txt", "damageindicator" + "\n" + "bacr" + "\n" + "neiplugins" + "\n" + "minimap" + "\n" + "inventorytweaks" + "\n" + "animationapi" + "\n" + "mapwriter" + "\n" + "dynamiclights" + "\n" + "shatter");
+                File.WriteAllText(cd + "\\settings\\mpexceptions.txt", "damageindicator" + "\n" + "bacr" + "\n" + "neiaddons" + "\n" + "minimap" + "\n" + "inventorytweaks" + "\n" + "mapwriter" + "\n" + "dynamiclights" + "\n" + "shatter" + "\n" + "bettertitlescreen" + "\n" + "journeymap" + "\n" + "notenoughkeys");
             }
 
             if (!File.Exists(cd + "\\modpack\\bin\\modpack.jar"))
@@ -175,18 +178,16 @@ namespace Technic_Modpack_Creator
                 Directory.Delete(cd + "\\temp", true);
             }
 
+            if (!File.Exists(cd + "\\resourcepack\\distribute.txt"))
+            {
+                File.WriteAllText(cd + "\\resourcepack\\distribute.txt", "");
+            }
+
             taskDone = true;
         }
 
-        private void MoveFiles()
+        private void Cleanup()
         {
-            if (File.Exists(cd + "\\temp\\modpack.jar"))
-            {
-                File.Delete(cd + "\\modpack\\bin\\modpack.jar");
-                File.Move(cd + "\\temp\\modpack.jar", cd + "\\modpack\\bin\\modpack.jar");
-                Directory.Delete(cd + "\\temp", true);
-            }
-
             taskDone = true;
         }
 
@@ -197,7 +198,7 @@ namespace Technic_Modpack_Creator
                 if (!File.Exists(cd + "\\plugins\\TechnicLauncher.exe"))
                 {
                     WebClient client = new WebClient();
-                    client.DownloadFileAsync(new Uri("http://launcher.technicpack.net/launcher/439/TechnicLauncher.exe"), cd + "\\plugins\\TechnicLauncher.exe");
+                    client.DownloadFileAsync(new Uri("http://launcher.technicpack.net/launcher4/234/TechnicLauncher.exe"), cd + "\\plugins\\TechnicLauncher.exe");
                     client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
                     client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
                 }
