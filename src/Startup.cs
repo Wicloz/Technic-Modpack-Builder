@@ -147,7 +147,7 @@ namespace Technic_Modpack_Creator
             Directory.CreateDirectory(cd + "\\plugins\\server_template");
             Directory.CreateDirectory(cd + "\\plugins\\mergedjar");
 
-            Directory.CreateDirectory(cd + "\\export\\modlist");
+            Directory.CreateDirectory(cd + "\\export\\versions");
             Directory.CreateDirectory(cd + "\\export\\icons");
             Directory.CreateDirectory(cd + "\\export\\zipfiles");
 

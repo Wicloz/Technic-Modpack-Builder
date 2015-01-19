@@ -23,6 +23,7 @@ namespace Technic_Modpack_Creator
         private TestClientButton testClient = new TestClientButton();
         private TestServerButton testServer = new TestServerButton();
         private BuildPackButton buildPack = new BuildPackButton();
+        private FileListManager fileLists = new FileListManager();
 
         private string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private string cd = Directory.GetCurrentDirectory();
@@ -43,12 +44,14 @@ namespace Technic_Modpack_Creator
             siteBox.Text = settings.nameLoad;
             folderBox.Text = settings.locationLoad;
             includeOptionsBox.Checked = settings.includeOptionsLoad;
+            fileLists.LoadLists();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             settings.SaveSettings(minecraftVersionBox.Text, modpackVersionBox.Text, siteBox.Text, folderBox.Text, includeOptionsBox.Checked);
             DeleteTempFolder();
+            fileLists.SaveLists(modpackVersionBox.Text);
         }
 
         private void testButtonClient_Click(object sender, EventArgs e)
@@ -64,6 +67,7 @@ namespace Technic_Modpack_Creator
 
                     MakeLowerCases();
                     MergeModpackJar();
+                    fileLists.SaveLists(modpackVersionBox.Text);
 
                     if (!testClient.StartTesting())
                     {
@@ -96,6 +100,7 @@ namespace Technic_Modpack_Creator
                     testModeB = 2;
 
                     MakeLowerCases();
+                    fileLists.SaveLists(modpackVersionBox.Text);
 
                     testServer.BuildServer(modpackVersionBox.Text);
                     testServer.DeleteBackupper();
@@ -120,12 +125,12 @@ namespace Technic_Modpack_Creator
                 MergeModpackJar();
                 testServer.BuildServer(modpackVersionBox.Text);
 
-                MakeModList();
                 buildPack.CreateZipFiles();
                 buildPack.CopyZipFiles(folderBox.Text, modpackVersionBox.Text);
 
                 testServer.DoneTesting();
 
+                fileLists.SaveLists(modpackVersionBox.Text);
                 OpenSite();
             }
         }
@@ -151,30 +156,6 @@ namespace Technic_Modpack_Creator
             {
                 Process.Start("http://www.technicpack.net/" + siteBox.Text);
             }
-        }
-
-        private void MakeModList()
-        {
-            string[] jarFiles = Directory.GetFiles(cd + "\\modpack", "*.jar", SearchOption.AllDirectories);
-            string[] zipFiles = Directory.GetFiles(cd + "\\modpack", "*.zip", SearchOption.AllDirectories);
-            List<string> allFiles = new List<string>();
-
-            foreach (string file in jarFiles)
-            {
-                allFiles.Add(file);
-            }
-            foreach (string file in zipFiles)
-            {
-                allFiles.Add(file);
-            }
-
-            string[] content = new string[allFiles.Count];
-            for (int i = 0; i < allFiles.Count; i++)
-            {
-                content[i] = Path.GetFileName(allFiles[i]);
-            }
-
-            File.WriteAllLines(cd + "\\export\\modlist\\Modlist.txt", content);
         }
 
         private void MergeModpackJar()

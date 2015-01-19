@@ -94,13 +94,13 @@ namespace Technic_Modpack_Creator
                 try
                 {
                     string file = cd + "\\plugins\\mergedjar\\modpack.jar";
-                    string zipFile = "bin\\modpack.jar";
+                    string zipFolder = "bin";
 
                     if (zip.ContainsEntry(file))
                     {
                         zip.RemoveEntry(file);
                     }
-                    zip.AddFile(file, zipFile);
+                    zip.AddFile(file, zipFolder);
                 }
                 catch
                 { }
@@ -108,13 +108,13 @@ namespace Technic_Modpack_Creator
                 if (File.Exists(cd + "\\plugins\\idfixer\\idfixminus.jar"))
                 {
                     string file = cd + "\\plugins\\idfixer\\idfixminus.jar";
-                    string zipFile = "mods\\idfixminus.jar";
+                    string zipFolder = "mods";
 
                     if (zip.ContainsEntry(file))
                     {
                         zip.RemoveEntry(file);
                     }
-                    zip.AddFile(file, zipFile);
+                    zip.AddFile(file, zipFolder);
                 }
 
                 bool succeed = false;

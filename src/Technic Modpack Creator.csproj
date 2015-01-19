@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildPackButton.cs" />
+    <Compile Include="FileListManager.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
