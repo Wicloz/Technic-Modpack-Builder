@@ -1,9 +1,11 @@
 damageindicator
 bacr
-neiplugins
+neiaddons
 minimap
 inventorytweaks
-animationapi
 mapwriter
 dynamiclights
 shatter
+bettertitlescreen
+journeymap
+notenoughkeys
