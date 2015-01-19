@@ -29,3 +29,6 @@ D:\Projects\Technic-Modpack-Builder\src\obj\Debug\Technic_Modpack_Creator.Proper
 D:\Projects\Technic-Modpack-Builder\src\obj\Debug\Technic_Modpack_Creator.Startup.resources
 D:\Projects\Technic-Modpack-Builder\src\obj\Debug\Technic Modpack Creator.csproj.GenerateResource.Cache
 D:\Projects\Technic-Modpack-Builder\src\bin\Debug\Ionic.Zip.dll
+D:\Projects\Technic-Modpack-Builder\src\Technic Modpack Builder\bin\Debug\Technic Modpack Creator.exe.config
+D:\Projects\Technic-Modpack-Builder\src\Technic Modpack Builder\obj\Debug\Technic Modpack Creator.exe
+D:\Projects\Technic-Modpack-Builder\src\Technic Modpack Builder\obj\Debug\Technic Modpack Creator.pdb
