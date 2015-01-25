@@ -119,7 +119,7 @@ namespace Technic_Modpack_Creator
 
             foreach (string file in Directory.GetFiles(appdata + "\\.technic\\modpacks\\vanilla", "*.txt", SearchOption.AllDirectories))
             {
-                if (!file.Contains("\\modpacks\\vanilla\\asm") && !file.Contains("\\modpacks\\vanilla\\saves") && !file.Contains("\\modpacks\\vanilla\\crash-reports"))
+                if (!file.Contains("\\modpacks\\vanilla\\asm") && !file.Contains("\\modpacks\\vanilla\\saves") && !file.Contains("\\modpacks\\vanilla\\crash-reports") && !file.Contains("\\modpacks\\vanilla\\backups") && !file.Contains("\\modpacks\\vanilla\\compendiumunlocks"))
                 {
                     string newFile = file.Replace(appdata + "\\.technic\\modpacks\\vanilla", cd + "\\modpack");
 
