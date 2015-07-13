@@ -48,13 +48,14 @@
             this.getServerButton = new System.Windows.Forms.Button();
             this.openThisFolder = new System.Windows.Forms.Button();
             this.includeOptionsBox = new System.Windows.Forms.CheckBox();
+            this.buttonStartLauncher = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // testButtonClient
             // 
             this.testButtonClient.Location = new System.Drawing.Point(15, 92);
             this.testButtonClient.Name = "testButtonClient";
-            this.testButtonClient.Size = new System.Drawing.Size(257, 45);
+            this.testButtonClient.Size = new System.Drawing.Size(139, 45);
             this.testButtonClient.TabIndex = 0;
             this.testButtonClient.Text = "Test Modpack Client";
             this.testButtonClient.UseVisualStyleBackColor = true;
@@ -226,16 +227,28 @@
             this.includeOptionsBox.AutoSize = true;
             this.includeOptionsBox.Location = new System.Drawing.Point(12, 281);
             this.includeOptionsBox.Name = "includeOptionsBox";
-            this.includeOptionsBox.Size = new System.Drawing.Size(114, 17);
+            this.includeOptionsBox.Size = new System.Drawing.Size(119, 17);
             this.includeOptionsBox.TabIndex = 20;
-            this.includeOptionsBox.Text = "Include Options.txt";
+            this.includeOptionsBox.Text = "Include Option Files";
             this.includeOptionsBox.UseVisualStyleBackColor = true;
+            // 
+            // buttonStartLauncher
+            // 
+            this.buttonStartLauncher.Enabled = false;
+            this.buttonStartLauncher.Location = new System.Drawing.Point(160, 92);
+            this.buttonStartLauncher.Name = "buttonStartLauncher";
+            this.buttonStartLauncher.Size = new System.Drawing.Size(112, 45);
+            this.buttonStartLauncher.TabIndex = 21;
+            this.buttonStartLauncher.Text = "Restart Launcher";
+            this.buttonStartLauncher.UseVisualStyleBackColor = true;
+            this.buttonStartLauncher.Click += new System.EventHandler(this.buttonStartLauncher_Click);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(696, 311);
+            this.Controls.Add(this.buttonStartLauncher);
             this.Controls.Add(this.includeOptionsBox);
             this.Controls.Add(this.openThisFolder);
             this.Controls.Add(this.getServerButton);
@@ -260,7 +273,7 @@
             this.MaximizeBox = false;
             this.Name = "Main";
             this.Text = "Technic Modpack Creator";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Load += new System.EventHandler(this.Main_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -288,6 +301,7 @@
         private System.Windows.Forms.Button getServerButton;
         private System.Windows.Forms.Button openThisFolder;
         public System.Windows.Forms.CheckBox includeOptionsBox;
+        private System.Windows.Forms.Button buttonStartLauncher;
     }
 }
 

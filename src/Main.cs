@@ -18,6 +18,7 @@ namespace Technic_Modpack_Creator
     public partial class Main : Form
     {
         public static Main acces;
+        private ModManager modManager = new ModManager();
 
         private SettingManager settings = new SettingManager();
         private TestClientButton testClient = new TestClientButton();
@@ -47,7 +48,7 @@ namespace Technic_Modpack_Creator
             fileLists.LoadLists();
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
             settings.SaveSettings(minecraftVersionBox.Text, modpackVersionBox.Text, siteBox.Text, folderBox.Text, includeOptionsBox.Checked);
             DeleteTempFolder();
@@ -61,8 +62,10 @@ namespace Technic_Modpack_Creator
                 if (PreClientCheck())
                 {
                     testButtonClient.Text = "Done Testing";
+                    buttonStartLauncher.Enabled = true;
                     buildButton.Enabled = false;
                     setupButton.Enabled = false;
+                    manageModsButton.Enabled = false;
                     testModeA = 2;
 
                     MakeLowerCases();
@@ -72,8 +75,10 @@ namespace Technic_Modpack_Creator
                     if (!testClient.StartTesting())
                     {
                         testButtonClient.Text = "Test Modpack Client";
+                        buttonStartLauncher.Enabled = false;
                         buildButton.Enabled = true;
                         setupButton.Enabled = true;
+                        manageModsButton.Enabled = true;
                         testModeA = 1;
                     }
                 }
@@ -83,8 +88,10 @@ namespace Technic_Modpack_Creator
                 testClient.DoneTesting();
 
                 testButtonClient.Text = "Test Modpack Client";
+                buttonStartLauncher.Enabled = false;
                 buildButton.Enabled = true;
                 setupButton.Enabled = true;
+                manageModsButton.Enabled = true;
                 testModeA = 1;
             }
         }
@@ -155,6 +162,11 @@ namespace Technic_Modpack_Creator
             if (siteBox.Text != "")
             {
                 Process.Start("http://www.technicpack.net/" + siteBox.Text);
+            }
+
+            if (modpackVersionBox.Text != "")
+            {
+                Process.Start(cd + "\\export\\versions\\" + modpackVersionBox.Text);
             }
         }
 
@@ -273,14 +285,6 @@ namespace Technic_Modpack_Creator
         {
             switch (minecraftVersionBox.Text)
             {
-                case "1.8.1":
-                    Process.Start("http://files.minecraftforge.net/minecraftforge//1.8");
-                    break;
-
-                case "1.8.0":
-                     Process.Start("http://files.minecraftforge.net/minecraftforge//1.8");
-                    break;
-
                 default:
                     Process.Start("http://files.minecraftforge.net/");
                     break;
@@ -308,7 +312,7 @@ namespace Technic_Modpack_Creator
 
         private void manageModsButton_Click(object sender, EventArgs e)
         {
-
+            modManager.ShowDialog();
         }
 
         private void openModpackFolder_Click(object sender, EventArgs e)
@@ -319,6 +323,11 @@ namespace Technic_Modpack_Creator
         private void openThisFolder_Click(object sender, EventArgs e)
         {
             Process.Start(cd);
+        }
+
+        private void buttonStartLauncher_Click(object sender, EventArgs e)
+        {
+            Proci.StartLauncher();
         }
     }
 }
