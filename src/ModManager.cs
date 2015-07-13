@@ -23,14 +23,17 @@ namespace Technic_Modpack_Creator
         public ModManager()
         {
             InitializeComponent();
-            LoadModList();
-            UpdateModList();
-
             // Initiate timer
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = 100;
             timer.Start();
+        }
+
+        private void ModManager_Load(object sender, EventArgs e)
+        {
+            LoadModList();
+            UpdateModList();
         }
 
         private void ModManager_FormClosing(object sender, FormClosingEventArgs e)
@@ -155,7 +158,7 @@ namespace Technic_Modpack_Creator
                 }
             }
 
-            if (index >= 0)
+            if (index >= 0 && modListView.Items.Count > 0)
             {
                 modListView.SelectedIndices.Add(index);
                 SelectItem(index);

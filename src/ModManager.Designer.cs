@@ -244,6 +244,7 @@
             this.Name = "ModManager";
             this.Text = "Mod Manager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ModManager_FormClosing);
+            this.Load += new System.EventHandler(this.ModManager_Load);
             this.modInfoBox.ResumeLayout(false);
             this.modInfoBox.PerformLayout();
             this.ResumeLayout(false);
