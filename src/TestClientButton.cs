@@ -24,7 +24,9 @@ namespace Technic_Modpack_Creator
                                         "\\.technic\\modpacks\\vanilla\\Flan",
                                         "\\.technic\\modpacks\\vanilla\\hats",
                                         "\\.technic\\modpacks\\vanilla\\mods",
-                                        "\\.technic\\modpacks\\vanilla\\journeymap"
+                                        "\\.technic\\modpacks\\vanilla\\scripts",
+                                        "\\.technic\\modpacks\\vanilla\\journeymap",
+                                        "\\.technic\\modpacks\\vanilla\\betterrecords"
                                      };
 
             foreach (string folder in deleteFolders)
@@ -88,15 +90,7 @@ namespace Technic_Modpack_Creator
                 File.Copy(file, newFile, true);
             }
 
-            Process launcher = new Process();
-
-            launcher.StartInfo.FileName = cd + "\\plugins\\TechnicLauncher.exe";
-            launcher.StartInfo.Arguments = "";
-
-            launcher.EnableRaisingEvents = true;
-            launcher.Exited += new EventHandler(techniclauncher_Exited);
-
-            launcher.Start();
+            Proci.StartLauncher();
             return true;
         }
 
@@ -119,7 +113,7 @@ namespace Technic_Modpack_Creator
 
             foreach (string file in Directory.GetFiles(appdata + "\\.technic\\modpacks\\vanilla", "*.txt", SearchOption.AllDirectories))
             {
-                if (!file.Contains("\\modpacks\\vanilla\\asm") && !file.Contains("\\modpacks\\vanilla\\saves") && !file.Contains("\\modpacks\\vanilla\\crash-reports") && !file.Contains("\\modpacks\\vanilla\\backups") && !file.Contains("\\modpacks\\vanilla\\compendiumunlocks"))
+                if (!file.Contains("\\modpacks\\vanilla\\asm") && !file.Contains("\\modpacks\\vanilla\\saves") && !file.Contains("\\modpacks\\vanilla\\crash-reports") && !file.Contains("\\modpacks\\vanilla\\backups") && !file.Contains("\\modpacks\\vanilla\\compendiumunlocks") && !file.Contains("\\modpacks\\vanilla\\betterrain\\null.txt"))
                 {
                     string newFile = file.Replace(appdata + "\\.technic\\modpacks\\vanilla", cd + "\\modpack");
 
@@ -134,6 +128,11 @@ namespace Technic_Modpack_Creator
                 File.Copy(appdata + "\\.technic\\modpacks\\vanilla\\options.txt", cd + "\\modpack\\options.txt", true);
             }
 
+            if (File.Exists(appdata + "\\.technic\\modpacks\\vanilla\\optionsof.txt"))
+            {
+                File.Copy(appdata + "\\.technic\\modpacks\\vanilla\\optionsof.txt", cd + "\\modpack\\optionsof.txt", true);
+            }
+
             foreach (string file in Directory.GetFiles(appdata + "\\.technic\\modpacks\\vanilla\\config", "*.*", SearchOption.AllDirectories))
             {
                 string newFile = file.Replace(appdata + "\\.technic\\modpacks\\vanilla", cd + "\\modpack");
@@ -141,11 +140,17 @@ namespace Technic_Modpack_Creator
                 Directory.CreateDirectory(Path.GetDirectoryName(newFile));
                 File.Copy(file, newFile, true);
             }
-        }
 
-        private void techniclauncher_Exited(object sender, EventArgs e)
-        {
-            //MessageBox.Show("Client Closed");
+            if (Directory.Exists(appdata + "\\.technic\\modpacks\\vanilla\\scripts"))
+            {
+                foreach (string file in Directory.GetFiles(appdata + "\\.technic\\modpacks\\vanilla\\scripts", "*.*", SearchOption.AllDirectories))
+                {
+                    string newFile = file.Replace(appdata + "\\.technic\\modpacks\\vanilla", cd + "\\modpack");
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+                    File.Copy(file, newFile, true);
+                }
+            }
         }
     }
 }

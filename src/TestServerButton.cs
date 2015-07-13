@@ -43,7 +43,6 @@ namespace Technic_Modpack_Creator
             }
 
             Directory.CreateDirectory(cd + "\\tests\\ServerBuild\\backups");
-            File.Delete(cd + "\\tests\\ServerBuild\\CleanFiles.bat");
             File.WriteAllText(cd + "\\tests\\ServerBuild\\currentversion.dat", version);
 
             foreach (string file in Directory.GetFiles(cd + "\\plugins\\forgemodloader", "*forge*.jar"))
@@ -78,7 +77,7 @@ namespace Technic_Modpack_Creator
             {
                 string path = Path.GetDirectoryName(file);
 
-                if (path.Contains("\\modpack\\config") || path.Contains("\\modpack\\coremods") || path.Contains("\\modpack\\Flan") || path.Contains("\\modpack\\mods"))
+                if (path.Contains("\\modpack\\config") || path.Contains("\\modpack\\coremods") || path.Contains("\\modpack\\Flan") || path.Contains("\\modpack\\mods") || path.Contains("\\modpack\\scripts"))
                 {
                     bool isException = false;
 

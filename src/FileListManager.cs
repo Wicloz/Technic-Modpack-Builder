@@ -39,30 +39,33 @@ namespace Technic_Modpack_Creator
 
         public void SaveLists(string currentVersion)
         {
-            fileLists.Sort();
-            CreateNewestList(currentVersion);
-
-            foreach (FileList list in fileLists)
+            if (currentVersion != "")
             {
-                string directory = cd + "\\export\\versions\\" + list.version;
+                fileLists.Sort();
+                CreateNewestList(currentVersion);
 
-                Directory.CreateDirectory(directory);
-                SaveLoad.SaveFileBf(list.order, directory + "\\properties.dat");
-
-                SaveLoad.SaveFileXml(list.fileList, directory + "\\filelist.txt");
-
-                List<string> modList = new List<string>();
-
-                foreach(string mod in list.modList)
+                foreach (FileList list in fileLists)
                 {
-                    modList.Add(" - " + ProcessModName(mod));
+                    string directory = cd + "\\export\\versions\\" + list.version;
+
+                    Directory.CreateDirectory(directory);
+                    SaveLoad.SaveFileBf(list.order, directory + "\\properties.dat");
+
+                    SaveLoad.SaveFileXml(list.fileList, directory + "\\filelist.txt");
+
+                    List<string> modList = new List<string>();
+
+                    foreach (string mod in list.modList)
+                    {
+                        modList.Add(" - " + ProcessModName(mod));
+                    }
+
+                    File.WriteAllLines(directory + "\\modlist.txt", modList);
+                    File.WriteAllLines(directory + "\\changelog.txt", list.changelog);
+
+                    SaveLoad.SaveFileBf(list.modList, directory + "\\modlist.dat");
+                    SaveLoad.SaveFileBf(list.changelog, directory + "\\changelog.dat");
                 }
-
-                File.WriteAllLines(directory + "\\modlist.txt", modList);
-                File.WriteAllLines(directory + "\\changelog.txt", list.changelog);
-
-                SaveLoad.SaveFileBf(list.modList, directory + "\\modlist.dat");
-                SaveLoad.SaveFileBf(list.changelog, directory + "\\changelog.dat");
             }
         }
 
