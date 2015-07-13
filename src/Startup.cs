@@ -141,6 +141,7 @@ namespace Technic_Modpack_Creator
             Directory.CreateDirectory(cd + "\\modpack\\Flan");
             Directory.CreateDirectory(cd + "\\modpack\\hats");
             Directory.CreateDirectory(cd + "\\modpack\\mods");
+            Directory.CreateDirectory(cd + "\\modpack\\scripts");
 
             Directory.CreateDirectory(cd + "\\plugins\\forgemodloader");
             Directory.CreateDirectory(cd + "\\plugins\\idfixer");
@@ -163,7 +164,7 @@ namespace Technic_Modpack_Creator
         {
             if (!File.Exists(cd + "\\settings\\mpexceptions.txt"))
             {
-                File.WriteAllText(cd + "\\settings\\mpexceptions.txt", "damageindicator" + "\n" + "bacr" + "\n" + "neiaddons" + "\n" + "minimap" + "\n" + "inventorytweaks" + "\n" + "mapwriter" + "\n" + "dynamiclights" + "\n" + "shatter" + "\n" + "bettertitlescreen" + "\n" + "journeymap" + "\n" + "notenoughkeys");
+                File.WriteAllText(cd + "\\settings\\mpexceptions.txt", "damageindicator" + "\n" + "bacr" + "\n" + "neiaddons" + "\n" + "minimap" + "\n" + "inventorytweaks" + "\n" + "mapwriter" + "\n" + "dynamiclights" + "\n" + "shatter" + "\n" + "bettertitlescreen" + "\n" + "journeymap" + "\n" + "notenoughkeys" + "\n" + "optifine" + "\n" + "java7checker");
             }
 
             if (!File.Exists(cd + "\\modpack\\bin\\modpack.jar"))
@@ -198,7 +199,7 @@ namespace Technic_Modpack_Creator
                 if (!File.Exists(cd + "\\plugins\\TechnicLauncher.exe"))
                 {
                     WebClient client = new WebClient();
-                    client.DownloadFileAsync(new Uri("http://launcher.technicpack.net/launcher4/234/TechnicLauncher.exe"), cd + "\\plugins\\TechnicLauncher.exe");
+                    client.DownloadFileAsync(new Uri("http://launcher.technicpack.net/launcher4/308/TechnicLauncher.exe"), cd + "\\plugins\\TechnicLauncher.exe");
                     client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
                     client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
                 }
