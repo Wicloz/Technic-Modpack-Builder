@@ -47,7 +47,9 @@
             this.modNameBox = new System.Windows.Forms.TextBox();
             this.updateCheckButton = new System.Windows.Forms.Button();
             this.updateModsButton = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.modInfoBox.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // modListView
@@ -64,10 +66,10 @@
             this.modListView.FullRowSelect = true;
             this.modListView.GridLines = true;
             this.modListView.HideSelection = false;
-            this.modListView.Location = new System.Drawing.Point(12, 217);
+            this.modListView.Location = new System.Drawing.Point(12, 332);
             this.modListView.MultiSelect = false;
             this.modListView.Name = "modListView";
-            this.modListView.Size = new System.Drawing.Size(638, 364);
+            this.modListView.Size = new System.Drawing.Size(741, 249);
             this.modListView.TabIndex = 0;
             this.modListView.UseCompatibleStateImageBehavior = false;
             this.modListView.View = System.Windows.Forms.View.Details;
@@ -102,9 +104,9 @@
             // 
             this.updateListButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.updateListButton.Location = new System.Drawing.Point(12, 172);
+            this.updateListButton.Location = new System.Drawing.Point(12, 287);
             this.updateListButton.Name = "updateListButton";
-            this.updateListButton.Size = new System.Drawing.Size(638, 39);
+            this.updateListButton.Size = new System.Drawing.Size(741, 39);
             this.updateListButton.TabIndex = 1;
             this.updateListButton.Text = "Update Modlist";
             this.updateListButton.UseVisualStyleBackColor = true;
@@ -114,6 +116,7 @@
             // 
             this.modInfoBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.modInfoBox.Controls.Add(this.groupBox1);
             this.modInfoBox.Controls.Add(this.openSiteButton);
             this.modInfoBox.Controls.Add(this.linkStatusLabel);
             this.modInfoBox.Controls.Add(this.label3);
@@ -122,9 +125,9 @@
             this.modInfoBox.Controls.Add(this.label2);
             this.modInfoBox.Controls.Add(this.label1);
             this.modInfoBox.Controls.Add(this.modNameBox);
-            this.modInfoBox.Location = new System.Drawing.Point(12, 13);
+            this.modInfoBox.Location = new System.Drawing.Point(12, 12);
             this.modInfoBox.Name = "modInfoBox";
-            this.modInfoBox.Size = new System.Drawing.Size(638, 103);
+            this.modInfoBox.Size = new System.Drawing.Size(421, 103);
             this.modInfoBox.TabIndex = 2;
             this.modInfoBox.TabStop = false;
             this.modInfoBox.Text = "Mod Information";
@@ -132,7 +135,7 @@
             // openSiteButton
             // 
             this.openSiteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.openSiteButton.Location = new System.Drawing.Point(502, 45);
+            this.openSiteButton.Location = new System.Drawing.Point(285, 45);
             this.openSiteButton.Name = "openSiteButton";
             this.openSiteButton.Size = new System.Drawing.Size(56, 20);
             this.openSiteButton.TabIndex = 7;
@@ -144,7 +147,7 @@
             // 
             this.linkStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkStatusLabel.AutoSize = true;
-            this.linkStatusLabel.Location = new System.Drawing.Point(564, 48);
+            this.linkStatusLabel.Location = new System.Drawing.Point(347, 48);
             this.linkStatusLabel.Name = "linkStatusLabel";
             this.linkStatusLabel.Size = new System.Drawing.Size(68, 13);
             this.linkStatusLabel.TabIndex = 6;
@@ -166,7 +169,7 @@
             this.modDownloadBox.Location = new System.Drawing.Point(97, 71);
             this.modDownloadBox.Name = "modDownloadBox";
             this.modDownloadBox.ReadOnly = true;
-            this.modDownloadBox.Size = new System.Drawing.Size(535, 20);
+            this.modDownloadBox.Size = new System.Drawing.Size(318, 20);
             this.modDownloadBox.TabIndex = 4;
             // 
             // modSiteBox
@@ -175,7 +178,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.modSiteBox.Location = new System.Drawing.Point(97, 45);
             this.modSiteBox.Name = "modSiteBox";
-            this.modSiteBox.Size = new System.Drawing.Size(399, 20);
+            this.modSiteBox.Size = new System.Drawing.Size(182, 20);
             this.modSiteBox.TabIndex = 3;
             this.modSiteBox.TextChanged += new System.EventHandler(this.modSiteBox_TextChanged);
             // 
@@ -204,16 +207,16 @@
             this.modNameBox.Location = new System.Drawing.Point(97, 19);
             this.modNameBox.Name = "modNameBox";
             this.modNameBox.ReadOnly = true;
-            this.modNameBox.Size = new System.Drawing.Size(535, 20);
+            this.modNameBox.Size = new System.Drawing.Size(318, 20);
             this.modNameBox.TabIndex = 0;
             // 
             // updateCheckButton
             // 
             this.updateCheckButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.updateCheckButton.Location = new System.Drawing.Point(12, 122);
+            this.updateCheckButton.Location = new System.Drawing.Point(6, 19);
             this.updateCheckButton.Name = "updateCheckButton";
-            this.updateCheckButton.Size = new System.Drawing.Size(323, 44);
+            this.updateCheckButton.Size = new System.Drawing.Size(183, 44);
             this.updateCheckButton.TabIndex = 3;
             this.updateCheckButton.Text = "Check For Updates";
             this.updateCheckButton.UseVisualStyleBackColor = true;
@@ -221,22 +224,31 @@
             // 
             // updateModsButton
             // 
-            this.updateModsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.updateModsButton.Location = new System.Drawing.Point(341, 123);
+            this.updateModsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.updateModsButton.Location = new System.Drawing.Point(6, 69);
             this.updateModsButton.Name = "updateModsButton";
-            this.updateModsButton.Size = new System.Drawing.Size(309, 43);
+            this.updateModsButton.Size = new System.Drawing.Size(183, 43);
             this.updateModsButton.TabIndex = 4;
             this.updateModsButton.Text = "Update Mods";
             this.updateModsButton.UseVisualStyleBackColor = true;
             this.updateModsButton.Click += new System.EventHandler(this.updateModsButton_Click);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.updateModsButton);
+            this.groupBox1.Controls.Add(this.updateCheckButton);
+            this.groupBox1.Location = new System.Drawing.Point(546, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(195, 122);
+            this.groupBox1.TabIndex = 5;
+            this.groupBox1.TabStop = false;
+            // 
             // ModManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(662, 593);
-            this.Controls.Add(this.updateModsButton);
-            this.Controls.Add(this.updateCheckButton);
+            this.ClientSize = new System.Drawing.Size(765, 593);
             this.Controls.Add(this.modInfoBox);
             this.Controls.Add(this.updateListButton);
             this.Controls.Add(this.modListView);
@@ -247,6 +259,7 @@
             this.Load += new System.EventHandler(this.ModManager_Load);
             this.modInfoBox.ResumeLayout(false);
             this.modInfoBox.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -271,5 +284,6 @@
         private System.Windows.Forms.Button openSiteButton;
         private System.Windows.Forms.Button updateCheckButton;
         private System.Windows.Forms.Button updateModsButton;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }

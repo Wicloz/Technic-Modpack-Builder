@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Net;
 using System.IO.Compression;
+using System.Diagnostics;
 
 namespace Technic_Modpack_Creator
 {
@@ -27,6 +28,8 @@ namespace Technic_Modpack_Creator
 
         // Dowload + Check info
         public int progress = 0;
+        public bool findQueued = false;
+        public bool findDone = false;
         public bool checkQueued = false;
         public bool checkDone = false;
         public bool downloadQueued = false;
@@ -125,6 +128,29 @@ namespace Technic_Modpack_Creator
             else
             {
                 dlSite = "NONE";
+            }
+        }
+
+        public void FindWebsiteUri()
+        {
+            WebClient client = new WebClient();
+            client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+            client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(findCurseCompleted);
+            progress = 10;
+            client.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanName(modFilename)));
+            Process.Start("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanName(modFilename));
+        }
+
+        private void findCurseCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            if (e != null && !String.IsNullOrEmpty(e.Result))
+            {
+                progress = 100;
+
+                UpdateModValues();
+                progress = 0;
+                findQueued = false;
+                findDone = true;
             }
         }
 
