@@ -224,7 +224,7 @@ namespace Technic_Modpack_Creator
             }
         }
 
-        private void MakeLowerCases ()
+        public void MakeLowerCases ()
         {
             foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods", "*.zip", SearchOption.AllDirectories))
             {

@@ -69,7 +69,7 @@ namespace Technic_Modpack_Creator
             return returnString.Replace(".#", "").Replace("#.", "").Replace("#", "").Replace("..", ".").Replace("..", ".").Replace("..", ".");
         }
 
-        public static string ExtractVersion(string s, char[] endChars, char[] startChars)
+        public static string ExtractSection(string s, char[] endChars, char[] startChars)
         {
             string returnString = "";
             bool foundChars = false;
@@ -101,11 +101,6 @@ namespace Technic_Modpack_Creator
                     foundChars = true;
                     checkChar = 0;
                 }
-            }
-
-            if (returnString == "")
-            {
-                returnString = "N/A";
             }
 
             return returnString;

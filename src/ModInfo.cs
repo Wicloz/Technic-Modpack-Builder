@@ -28,6 +28,7 @@ namespace Technic_Modpack_Creator
 
         // Dowload + Check info
         public int progress = 0;
+        public int findMode = 0;
         public bool findQueued = false;
         public bool findDone = false;
         public bool checkQueued = false;
@@ -65,6 +66,10 @@ namespace Technic_Modpack_Creator
                 if (checkQueued)
                 {
                     return "Checking for Update ...";
+                }
+                else if (findQueued)
+                {
+                    return "Searching for Website ...";
                 }
                 else if (downloadQueued && progress != 0)
                 {
@@ -134,23 +139,78 @@ namespace Technic_Modpack_Creator
         public void FindWebsiteUri()
         {
             WebClient client = new WebClient();
-            client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
             client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(findCurseCompleted);
-            progress = 10;
-            client.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanName(modFilename)));
-            Process.Start("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanName(modFilename));
+            progress = 0;
+            findMode++;
+
+            switch (findMode)
+            {
+                case 1:
+                    client.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanName(modFilename)));
+                    break;
+                case 2:
+                    client.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanName(modFilename).Replace("mc", "").Replace("r", "").Replace("v", "")));
+                    break;
+
+                default:
+                    progress = 0;
+                    findMode = 0;
+                    findQueued = false;
+                    findDone = true;
+                    break;
+            }
         }
 
         private void findCurseCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
             if (e != null && !String.IsNullOrEmpty(e.Result))
             {
-                progress = 100;
+                using (StringReader sr = new StringReader(e.Result))
+                {
+                    List<string> results = new List<string>();
+
+                    while (true)
+                    {
+                        try
+                        {
+                            string currentline = sr.ReadLine().Trim();
+                            if (currentline.Contains("<a href=\"/mc-mods/"))
+                            {
+                                results.Add(currentline);
+                            }
+                        }
+                        catch
+                        {
+                            break;
+                        }
+                    }
+
+                    foreach (string result in results)
+                    {
+                        if (MiscFunctions.CleanName(result).Contains(MiscFunctions.CleanName(modFilename)))
+                        {
+                            char[] endCharList = new char[] { '"' };
+                            char[] startCharList = new char[] { '=', '"' };
+                            string linkSection = MiscFunctions.ExtractSection(result, endCharList, startCharList);
+                            website = "http://minecraft.curseforge.com" + linkSection;
+                            break;
+                        }
+                    }
+                }
 
                 UpdateModValues();
-                progress = 0;
-                findQueued = false;
-                findDone = true;
+
+                if (siteMode == "NONE")
+                {
+                    FindWebsiteUri();
+                }
+                else
+                {
+                    progress = 0;
+                    findMode = 0;
+                    findQueued = false;
+                    findDone = true;
+                }
             }
         }
 
@@ -175,46 +235,54 @@ namespace Technic_Modpack_Creator
             if (e != null && !String.IsNullOrEmpty(e.Result))
             {
                 progress = 100;
-                StringReader sr = new StringReader(e.Result);
-                string newVersion = "";
-                string newFile = "N/A";
-
-                if (siteMode == "curse")
+                using (StringReader sr = new StringReader(e.Result))
                 {
-                    while (!newVersion.Contains("<a class=\"overflow-tip\" href=\"/mc-mods/"))
+                    string newVersion = "";
+                    string newFile = "";
+
+                    if (siteMode == "curse")
                     {
-                        newVersion = sr.ReadLine().Trim();
+                        while (!newVersion.Contains("<a class=\"overflow-tip\" href=\"/mc-mods/"))
+                        {
+                            newVersion = sr.ReadLine().Trim();
+                        }
+
+                        char[] endCharList = new char[] { '<', '"' };
+                        char[] startCharList = new char[] { '>' };
+                        newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList);
                     }
 
-                    char[] endCharList = new char[] {'<','"'};
-                    char[] startCharList = new char[] {'>'};
-                    newFile = MiscFunctions.ExtractVersion(newVersion, endCharList, startCharList);
-                }
-
-                if (siteMode == "forum")
-                {
-                    while (!newVersion.Contains("<title>"))
+                    if (siteMode == "forum")
                     {
-                        newVersion = sr.ReadLine().Trim();
-                    }
-                    newFile = MiscFunctions.RemoveLetters(newVersion);
-                }
-
-                if (siteMode == "github")
-                {
-                    while (!newVersion.Contains("<a href=\"" + website.Replace("https://github.com", "").Replace("/latest", "/download/")))
-                    {
-                        newVersion = sr.ReadLine().Trim();
+                        while (!newVersion.Contains("<title>"))
+                        {
+                            newVersion = sr.ReadLine().Trim();
+                        }
+                        newFile = MiscFunctions.RemoveLetters(newVersion);
                     }
 
-                    char[] endCharList = new char[] {'"'};
-                    char[] startCharList = new char[] {'/'};
-                    newFile = MiscFunctions.ExtractVersion(newVersion, endCharList, startCharList);
+                    if (siteMode == "github")
+                    {
+                        while (!newVersion.Contains("<a href=\"" + website.Replace("https://github.com", "").Replace("/latest", "/download/")))
+                        {
+                            newVersion = sr.ReadLine().Trim();
+                        }
+
+                        char[] endCharList = new char[] { '"' };
+                        char[] startCharList = new char[] { '/' };
+                        newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList);
+                    }
+
+                    if (!newFile.Contains(".zip") && !newFile.Contains(".jar"))
+                    {
+                        newFile += ".jar";
+                    }
+
+                    versionLatestRaw = newVersion;
+                    newFileName = Path.GetFileName(newFile);
+                    versionLatest = MiscFunctions.RemoveLetters(newFileName);
                 }
 
-                versionLatestRaw = newVersion;
-                newFileName = Path.GetFileName(newFile);
-                versionLatest = MiscFunctions.RemoveLetters(newFileName);
                 UpdateModValues();
                 progress = 0;
                 checkQueued = false;
@@ -260,7 +328,7 @@ namespace Technic_Modpack_Creator
                     File.Delete(oldModLocation);
 
                     File.Move(newFilePath, newModLocation);
-                    modFilename = newFileName;
+                    modFilename = newFileName.ToLower();
 
                     try
                     {

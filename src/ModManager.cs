@@ -19,6 +19,7 @@ namespace Technic_Modpack_Creator
 
         private ModInfo selectedMod;
         private int selectedIndex = -1;
+        private bool action = false;
 
         public ModManager()
         {
@@ -57,6 +58,7 @@ namespace Technic_Modpack_Creator
 
         private void UpdateModList()
         {
+            Main.acces.MakeLowerCases();
             List<string> fileList = new List<string>();
 
             foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods", "*.jar", SearchOption.TopDirectoryOnly))
@@ -123,6 +125,42 @@ namespace Technic_Modpack_Creator
                     modListView.Items[i].SubItems[4].Text = modList[i].updateState;
                 }
             }
+
+            bool allDone = true;
+            if (action)
+            {
+                foreach (ModInfo mod in modList)
+                {
+                    if (mod.checkQueued || mod.downloadQueued || mod.findQueued)
+                    {
+                        allDone = false;
+                    }
+                }
+            }
+
+            if (allDone && action)
+            {
+                UpdateModList();
+                UnlockButtons();
+            }
+        }
+
+        private void LockButtons ()
+        {
+            action = true;
+            findSiteButton.Enabled = false;
+            updateCheckButton.Enabled = false;
+            updateModsButton.Enabled = false;
+            updateSelectedButton.Enabled = false;
+        }
+
+        private void UnlockButtons ()
+        {
+            findSiteButton.Enabled = true;
+            updateCheckButton.Enabled = true;
+            updateModsButton.Enabled = true;
+            updateSelectedButton.Enabled = true;
+            action = false;
         }
 
         private void UpdateListView()
@@ -208,16 +246,32 @@ namespace Technic_Modpack_Creator
 
         private void modSiteBox_TextChanged(object sender, EventArgs e)
         {
-            selectedMod.website = modSiteBox.Text;
-            selectedMod.UpdateModValues();
-            modListView.Items[selectedIndex].SubItems[1].Text = selectedMod.uriState;
-            linkStatusLabel.Text = selectedMod.uriState;
-            modDownloadBox.Text = selectedMod.dlSite;
+            if (selectedMod != null && selectedMod.modFilename == modNameBox.Text)
+            {
+                selectedMod.website = modSiteBox.Text;
+                selectedMod.UpdateModValues();
+                modListView.Items[selectedIndex].SubItems[1].Text = selectedMod.uriState;
+                linkStatusLabel.Text = selectedMod.uriState;
+                modDownloadBox.Text = selectedMod.dlSite;
+            }
         }
 
         private void openSiteButton_Click(object sender, EventArgs e)
         {
             Process.Start(selectedMod.website);
+        }
+
+        private void findSiteButton_Click(object sender, EventArgs e)
+        {
+            foreach (ModInfo mod in modList)
+            {
+                if (mod.siteMode == "NONE")
+                {
+                    LockButtons();
+                    mod.findQueued = true;
+                    mod.FindWebsiteUri();
+                }
+            }
         }
 
         private void updateCheckButton_Click(object sender, EventArgs e)
@@ -226,6 +280,7 @@ namespace Technic_Modpack_Creator
             {
                 if (mod.siteMode != "NONE")
                 {
+                    LockButtons();
                     mod.checkQueued = true;
                     mod.CheckForUpdate();
                 }
@@ -238,9 +293,20 @@ namespace Technic_Modpack_Creator
             {
                 if (mod.siteMode != "NONE" && mod.versionLocalRaw != mod.versionLatestRaw)
                 {
+                    LockButtons();
                     mod.downloadQueued = true;
                     mod.UpdateMod();
                 }
+            }
+        }
+
+        private void updateSelectedButton_Click(object sender, EventArgs e)
+        {
+            if (selectedMod.siteMode != "NONE" && selectedMod.versionLocalRaw != selectedMod.versionLatestRaw)
+            {
+                LockButtons();
+                selectedMod.downloadQueued = true;
+                selectedMod.UpdateMod();
             }
         }
     }
