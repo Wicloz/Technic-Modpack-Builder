@@ -59,6 +59,8 @@
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="MiscFunctions.cs" />
+    <Compile Include="ModInfo.cs" />
     <Compile Include="ModManager.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,6 +82,9 @@
     <Compile Include="TestServerButton.cs" />
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModManager.resx">
+      <DependentUpon>ModManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
