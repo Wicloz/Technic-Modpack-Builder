@@ -55,7 +55,7 @@ namespace Technic_Modpack_Creator
 
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Tick += new EventHandler(timer_Tick);
-            timer.Interval = 200;
+            timer.Interval = 100;
             timer.Start();
 
             if (Directory.Exists(cd + "\\temp"))
