@@ -81,7 +81,7 @@ namespace Technic_Modpack_Creator
 
                 foreach (string file in Directory.GetFiles(cd + "\\modpack", "*.*", SearchOption.AllDirectories))
                 {
-                    if ((Main.acces.includeOptionsBox.Checked || !file.Contains("\\modpack\\options.txt")) && file != cd + "\\modpack\\bin\\modpack.jar")
+                    if ((Main.acces.includeOptionsBox.Checked || (!file.Contains("\\modpack\\options.txt") && !file.Contains("\\modpack\\optionsof.txt"))) && file != cd + "\\modpack\\bin\\modpack.jar")
                     {
                         if (zip.ContainsEntry(file))
                         {
