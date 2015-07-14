@@ -187,7 +187,7 @@ namespace Technic_Modpack_Creator
                 Directory.Delete(cd + "\\temp", true);
             }
 
-            if (Directory.GetDirectories(cd + "\\downloads").Length == 0)
+            if (Directory.Exists(cd + "\\downloads") && Directory.GetDirectories(cd + "\\downloads").Length == 0)
             {
                 Directory.Delete(cd + "\\downloads", true);
             }
