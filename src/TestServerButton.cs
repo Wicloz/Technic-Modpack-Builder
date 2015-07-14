@@ -35,7 +35,7 @@ namespace Technic_Modpack_Creator
                 }
             }
 
-            //Copy servertemplate
+            //Copy server_template
             foreach (string file in Directory.GetFiles(cd + "\\plugins\\server_template", "*.*", SearchOption.AllDirectories))
             {
                 string newFile = file.Replace("\\plugins\\server_template", "\\tests\\ServerBuild");
