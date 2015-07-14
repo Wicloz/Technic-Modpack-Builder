@@ -58,16 +58,10 @@ namespace Technic_Modpack_Creator
             timer.Interval = 100;
             timer.Start();
 
-            if (Directory.Exists(cd + "\\temp"))
-            {
-                Directory.Delete(cd + "\\temp", true);
-            }
-
             if (File.Exists(cd + "\\temp\\modpack.jar"))
             {
                 File.Delete(cd + "\\modpack\\bin\\modpack.jar");
                 File.Move(cd + "\\temp\\modpack.jar", cd + "\\modpack\\bin\\modpack.jar");
-                Directory.Delete(cd + "\\temp", true);
             }
 
             progressBar.Style = ProgressBarStyle.Marquee;
@@ -189,6 +183,11 @@ namespace Technic_Modpack_Creator
 
         private void Cleanup()
         {
+            if (Directory.Exists(cd + "\\temp"))
+            {
+                Directory.Delete(cd + "\\temp", true);
+            }
+
             taskDone = true;
         }
 

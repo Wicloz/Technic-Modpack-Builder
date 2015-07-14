@@ -24,6 +24,7 @@ namespace Technic_Modpack_Creator
                     .Replace("9", "")
                     .Replace(".zip", "")
                     .Replace(".jar", "")
+                    .Replace(".disabled", "")
                     .Replace(".txt", "")
                     .Replace("-", "")
                     .Replace("_", "")

@@ -20,6 +20,8 @@ namespace Technic_Modpack_Creator
         private ModInfo selectedMod;
         private int selectedIndex = -1;
         private bool action = false;
+        private bool updatingFields = false;
+        private bool downloadBusy = false;
 
         public ModManager()
         {
@@ -66,6 +68,10 @@ namespace Technic_Modpack_Creator
                 fileList.Add(Path.GetFileName(file));
             }
             foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods", "*.zip", SearchOption.TopDirectoryOnly))
+            {
+                fileList.Add(Path.GetFileName(file));
+            }
+            foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods", "*.disabled", SearchOption.TopDirectoryOnly))
             {
                 fileList.Add(Path.GetFileName(file));
             }
@@ -120,24 +126,54 @@ namespace Technic_Modpack_Creator
         {
             for (int i = 0; i < modList.Count; i++)
             {
-                if (modList[i].updateState != modListView.Items[i].SubItems[4].Text)
+                if (modList[i].updateState != modListView.Items[i].SubItems[5].Text)
                 {
-                    modListView.Items[i].SubItems[4].Text = modList[i].updateState;
+                    modListView.Items[i].SubItems[5].Text = modList[i].updateState;
                 }
             }
 
             bool allDone = true;
-            if (action)
+            bool allDownloadDone = true;
+            foreach (ModInfo mod in modList)
             {
-                foreach (ModInfo mod in modList)
+                if (mod.findQueued && !mod.findBusy)
                 {
-                    if (mod.checkQueued || mod.downloadQueued || mod.findQueued)
-                    {
-                        allDone = false;
-                    }
+                    LockButtons();
+                    mod.FindWebsiteUri();
+                }
+                else if (mod.checkQueued && !mod.checkBusy)
+                {
+                    LockButtons();
+                    mod.CheckForUpdate();
+                }
+                else if (mod.downloadQueued && !mod.downloadBusy && !downloadBusy)
+                {
+                    LockButtons();
+                    downloadBusy = true;
+                    mod.UpdateMod();
+                }
+
+                if (mod.downloadBusy)
+                {
+                    allDownloadDone = false;
+                }
+                if (mod.checkQueued || mod.downloadQueued || mod.findQueued)
+                {
+                    allDone = false;
+                }
+
+                if (mod.updateList)
+                {
+                    mod.updateList = false;
+                    UpdateModList();
+                    break;
                 }
             }
 
+            if (allDownloadDone)
+            {
+                downloadBusy = false;
+            }
             if (allDone && action)
             {
                 UpdateModList();
@@ -145,7 +181,7 @@ namespace Technic_Modpack_Creator
             }
         }
 
-        private void LockButtons ()
+        private void LockButtons()
         {
             action = true;
             findSiteButton.Enabled = false;
@@ -154,7 +190,7 @@ namespace Technic_Modpack_Creator
             updateSelectedButton.Enabled = false;
         }
 
-        private void UnlockButtons ()
+        private void UnlockButtons()
         {
             findSiteButton.Enabled = true;
             updateCheckButton.Enabled = true;
@@ -174,8 +210,10 @@ namespace Technic_Modpack_Creator
                 lvi.SubItems.Add(mod.uriState);
                 lvi.SubItems.Add(mod.versionLocal);
                 lvi.SubItems.Add(mod.versionLatest);
+                lvi.SubItems.Add(mod.versionLatest);
                 lvi.SubItems.Add(mod.updateState);
 
+                lvi.Checked = !mod.disabled;
                 modListView.Items.Add(lvi);
             }
 
@@ -209,19 +247,26 @@ namespace Technic_Modpack_Creator
 
         private void UpdateModFields()
         {
+            updatingFields = true;
             modNameBox.Text = selectedMod.modFilename;
             modSiteBox.Text = selectedMod.website;
             modDownloadBox.Text = selectedMod.dlSite;
             linkStatusLabel.Text = selectedMod.uriState;
+            canUpdateBox.Checked = selectedMod.canUpdate;
+            updateSelectedButton.Enabled = selectedMod.canUpdate;
+            updatingFields = false;
         }
 
         private void ClearSelection()
         {
+            updatingFields = true;
             selectedMod = null;
             modNameBox.Text = "";
             modSiteBox.Text = "";
             modDownloadBox.Text = "";
             linkStatusLabel.Text = "";
+            canUpdateBox.Checked = false;
+            updatingFields = false;
         }
 
         private void SelectItem(int index)
@@ -246,13 +291,23 @@ namespace Technic_Modpack_Creator
 
         private void modSiteBox_TextChanged(object sender, EventArgs e)
         {
-            if (selectedMod != null && selectedMod.modFilename == modNameBox.Text)
+            if (selectedMod != null && !updatingFields)
             {
                 selectedMod.website = modSiteBox.Text;
                 selectedMod.UpdateModValues();
                 modListView.Items[selectedIndex].SubItems[1].Text = selectedMod.uriState;
                 linkStatusLabel.Text = selectedMod.uriState;
                 modDownloadBox.Text = selectedMod.dlSite;
+            }
+        }
+
+        private void canUpdateBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (selectedMod != null && !updatingFields)
+            {
+                selectedMod.canUpdate = canUpdateBox.Checked;
+                updateSelectedButton.Enabled = selectedMod.canUpdate;
+                modListView.Items[selectedIndex].SubItems[5].Text = selectedMod.updateState;
             }
         }
 
@@ -267,9 +322,8 @@ namespace Technic_Modpack_Creator
             {
                 if (mod.siteMode == "NONE")
                 {
-                    LockButtons();
+                    //LockButtons();
                     mod.findQueued = true;
-                    mod.FindWebsiteUri();
                 }
             }
         }
@@ -280,9 +334,8 @@ namespace Technic_Modpack_Creator
             {
                 if (mod.siteMode != "NONE")
                 {
-                    LockButtons();
+                    //LockButtons();
                     mod.checkQueued = true;
-                    mod.CheckForUpdate();
                 }
             }
         }
@@ -291,23 +344,28 @@ namespace Technic_Modpack_Creator
         {
             foreach (ModInfo mod in modList)
             {
-                if (mod.siteMode != "NONE" && mod.versionLocalRaw != mod.versionLatestRaw)
+                if (mod.canUpdate)
                 {
-                    LockButtons();
+                    //LockButtons();
                     mod.downloadQueued = true;
-                    mod.UpdateMod();
                 }
             }
         }
 
         private void updateSelectedButton_Click(object sender, EventArgs e)
         {
-            if (selectedMod.siteMode != "NONE" && selectedMod.versionLocalRaw != selectedMod.versionLatestRaw)
+            if (selectedMod.canUpdate)
             {
-                LockButtons();
+                //LockButtons();
                 selectedMod.downloadQueued = true;
-                selectedMod.UpdateMod();
             }
+        }
+
+        private void modListView_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            modList[e.Item.Index].disabled = !e.Item.Checked;
+            modList[e.Item.Index].SetFileNames();
+            e.Item.SubItems[0].Text = modList[e.Item.Index].modFilename;
         }
     }
 }

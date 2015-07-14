@@ -37,6 +37,7 @@
             this.updateState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.updateListButton = new System.Windows.Forms.Button();
             this.modInfoBox = new System.Windows.Forms.GroupBox();
+            this.updateSelectedButton = new System.Windows.Forms.Button();
             this.openSiteButton = new System.Windows.Forms.Button();
             this.linkStatusLabel = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -49,7 +50,8 @@
             this.updateModsButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.findSiteButton = new System.Windows.Forms.Button();
-            this.updateSelectedButton = new System.Windows.Forms.Button();
+            this.canUpdateBox = new System.Windows.Forms.CheckBox();
+            this.releaseDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.modInfoBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -59,11 +61,13 @@
             this.modListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.modListView.CheckBoxes = true;
             this.modListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.modName,
             this.uriState,
             this.versionLocal,
             this.versionLatest,
+            this.releaseDate,
             this.updateState});
             this.modListView.FullRowSelect = true;
             this.modListView.GridLines = true;
@@ -75,6 +79,7 @@
             this.modListView.TabIndex = 0;
             this.modListView.UseCompatibleStateImageBehavior = false;
             this.modListView.View = System.Windows.Forms.View.Details;
+            this.modListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.modListView_ItemChecked);
             this.modListView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.modListView_ItemSelectionChanged);
             // 
             // modName
@@ -85,22 +90,22 @@
             // uriState
             // 
             this.uriState.Text = "URI State";
-            this.uriState.Width = 87;
+            this.uriState.Width = 91;
             // 
             // versionLocal
             // 
             this.versionLocal.Text = "Local Version";
-            this.versionLocal.Width = 186;
+            this.versionLocal.Width = 133;
             // 
             // versionLatest
             // 
             this.versionLatest.Text = "Latest Version";
-            this.versionLatest.Width = 171;
+            this.versionLatest.Width = 139;
             // 
             // updateState
             // 
             this.updateState.Text = "Update State";
-            this.updateState.Width = 181;
+            this.updateState.Width = 141;
             // 
             // updateListButton
             // 
@@ -118,6 +123,7 @@
             // 
             this.modInfoBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.modInfoBox.Controls.Add(this.canUpdateBox);
             this.modInfoBox.Controls.Add(this.updateSelectedButton);
             this.modInfoBox.Controls.Add(this.openSiteButton);
             this.modInfoBox.Controls.Add(this.linkStatusLabel);
@@ -133,6 +139,18 @@
             this.modInfoBox.TabIndex = 2;
             this.modInfoBox.TabStop = false;
             this.modInfoBox.Text = "Mod Information";
+            // 
+            // updateSelectedButton
+            // 
+            this.updateSelectedButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.updateSelectedButton.Location = new System.Drawing.Point(9, 97);
+            this.updateSelectedButton.Name = "updateSelectedButton";
+            this.updateSelectedButton.Size = new System.Drawing.Size(481, 34);
+            this.updateSelectedButton.TabIndex = 8;
+            this.updateSelectedButton.Text = "Update Mod";
+            this.updateSelectedButton.UseVisualStyleBackColor = true;
+            this.updateSelectedButton.Click += new System.EventHandler(this.updateSelectedButton_Click);
             // 
             // openSiteButton
             // 
@@ -260,17 +278,21 @@
             this.findSiteButton.UseVisualStyleBackColor = true;
             this.findSiteButton.Click += new System.EventHandler(this.findSiteButton_Click);
             // 
-            // updateSelectedButton
+            // canUpdateBox
             // 
-            this.updateSelectedButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.updateSelectedButton.Location = new System.Drawing.Point(9, 97);
-            this.updateSelectedButton.Name = "updateSelectedButton";
-            this.updateSelectedButton.Size = new System.Drawing.Size(594, 34);
-            this.updateSelectedButton.TabIndex = 8;
-            this.updateSelectedButton.Text = "Update Mod";
-            this.updateSelectedButton.UseVisualStyleBackColor = true;
-            this.updateSelectedButton.Click += new System.EventHandler(this.updateSelectedButton_Click);
+            this.canUpdateBox.AutoSize = true;
+            this.canUpdateBox.Location = new System.Drawing.Point(496, 107);
+            this.canUpdateBox.Name = "canUpdateBox";
+            this.canUpdateBox.Size = new System.Drawing.Size(107, 17);
+            this.canUpdateBox.TabIndex = 9;
+            this.canUpdateBox.Text = "Update Available";
+            this.canUpdateBox.UseVisualStyleBackColor = true;
+            this.canUpdateBox.CheckedChanged += new System.EventHandler(this.canUpdateBox_CheckedChanged);
+            // 
+            // releaseDate
+            // 
+            this.releaseDate.Text = "Release Date";
+            this.releaseDate.Width = 124;
             // 
             // ModManager
             // 
@@ -316,5 +338,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button findSiteButton;
         private System.Windows.Forms.Button updateSelectedButton;
+        private System.Windows.Forms.CheckBox canUpdateBox;
+        private System.Windows.Forms.ColumnHeader releaseDate;
     }
 }

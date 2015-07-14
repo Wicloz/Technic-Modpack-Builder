@@ -14,27 +14,66 @@ namespace Technic_Modpack_Creator
     class ModInfo : System.IComparable<ModInfo>
     {
         private string cd = Directory.GetCurrentDirectory();
+        private string downloadFolder;
         public string modFilename = "";
+        public bool disabled = false;
 
         public string versionLocalRaw = "";
         public string versionLatestRaw = "";
         public string versionLocal = "N/A";
         public string versionLatest = "N/A";
+        public string releaseDate = "N/A";
         public string newFileName = "";
+        public bool _canUpdate = false;
 
         public string website = "NONE";
         public string siteMode = "NONE";
         public string dlSite = "NONE";
 
         // Dowload + Check info
+        public bool updateList = false;
         public int progress = 0;
         public int findMode = 0;
         public bool findQueued = false;
-        public bool findDone = false;
         public bool checkQueued = false;
-        public bool checkDone = false;
         public bool downloadQueued = false;
-        public bool downloadDone = false;
+        private bool _findBusy = false;
+        private bool _checkBusy = false;
+        private bool _downloadBusy = false;
+
+        public bool findBusy
+        {
+            get
+            {
+                return _findBusy;
+            }
+            set
+            {
+                _findBusy = value;
+            }
+        }
+        public bool checkBusy
+        {
+            get
+            {
+                return _checkBusy;
+            }
+            set
+            {
+                _checkBusy = value;
+            }
+        }
+        public bool downloadBusy
+        {
+            get
+            {
+                return _downloadBusy;
+            }
+            set
+            {
+                _downloadBusy = value;
+            }
+        }
 
         public string uriState
         {
@@ -58,7 +97,6 @@ namespace Technic_Modpack_Creator
                 }
             }
         }
-
         public string updateState
         {
             get
@@ -79,13 +117,32 @@ namespace Technic_Modpack_Creator
                 {
                     return "Awaiting Download ...";
                 }
-                else if (versionLatestRaw == versionLocalRaw)
+                else if (canUpdate)
                 {
-                    return "";
+                    return "Update Available";
                 }
                 else
                 {
-                    return "Update Available";
+                    return "";
+                }
+            }
+        }
+        public bool canUpdate
+        {
+            get
+            {
+                return _canUpdate;
+            }
+            set
+            {
+                _canUpdate = value;
+                if (canUpdate)
+                {
+                    Directory.CreateDirectory(downloadFolder);
+                }
+                else
+                {
+                    Directory.Delete(downloadFolder, true);
                 }
             }
         }
@@ -102,6 +159,9 @@ namespace Technic_Modpack_Creator
         {
             // Manage local version
             versionLocal = MiscFunctions.RemoveLetters(modFilename);
+
+            // Initialise variables
+            downloadFolder = cd + "\\downloads\\" + MiscFunctions.CleanName(modFilename);
 
             // Determine site mode
             if (website == "")
@@ -141,8 +201,35 @@ namespace Technic_Modpack_Creator
             }
         }
 
+        public void SetFileNames()
+        {
+            if (disabled && !newFileName.Contains(".disabled"))
+            {
+                newFileName += ".disabled";
+            }
+            if (disabled && !modFilename.Contains(".disabled"))
+            {
+                string modPath = cd + "\\modpack\\mods\\" + modFilename;
+                File.Move(modPath, modPath + ".disabled");
+                modFilename += ".disabled";
+            }
+
+            if (!disabled)
+            {
+                newFileName = newFileName.Replace(".disabled", "");
+                modFilename = modFilename.Replace(".disabled", "");
+                string modPath = cd + "\\modpack\\mods\\" + modFilename;
+
+                if (File.Exists(modPath + ".disabled"))
+                {
+                    File.Move(modPath + ".disabled", modPath);
+                }
+            }
+        }
+
         public void FindWebsiteUri()
         {
+            findBusy = true;
             WebClient client1 = new WebClient();
             client1.DownloadStringCompleted += new DownloadStringCompletedEventHandler(findCurseCompleted);
             WebClient client2 = new WebClient();
@@ -160,10 +247,12 @@ namespace Technic_Modpack_Creator
                     break;
 
                 default:
+                    UpdateModValues();
                     progress = 0;
                     findMode = 0;
                     findQueued = false;
-                    findDone = true;
+                    findBusy = false;
+                    updateList = true;
                     break;
             }
         }
@@ -216,7 +305,8 @@ namespace Technic_Modpack_Creator
                     progress = 0;
                     findMode = 0;
                     findQueued = false;
-                    findDone = true;
+                    findBusy = false;
+                    updateList = true;
                 }
             }
         }
@@ -256,7 +346,8 @@ namespace Technic_Modpack_Creator
                     progress = 0;
                     findMode = 0;
                     findQueued = false;
-                    findDone = true;
+                    findBusy = false;
+                    updateList = true;
                 }
             }
         }
@@ -265,6 +356,7 @@ namespace Technic_Modpack_Creator
         {
             if (siteMode != "NONE")
             {
+                checkBusy = true;
                 WebClient client = new WebClient();
                 client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
                 client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(checkDownloadCompleted);
@@ -273,7 +365,7 @@ namespace Technic_Modpack_Creator
             }
             else
             {
-                checkDone = true;
+                checkQueued = false;
             }
         }
 
@@ -324,16 +416,26 @@ namespace Technic_Modpack_Creator
                     {
                         newFile += ".jar";
                     }
+                    if (disabled && !newFile.Contains(".disabled"))
+                    {
+                        newFile += ".disabled";
+                    }
 
                     versionLatestRaw = newVersion;
                     newFileName = Path.GetFileName(newFile);
                     versionLatest = MiscFunctions.RemoveLetters(newFileName);
+
+                    if (versionLatestRaw != versionLocalRaw)
+                    {
+                        canUpdate = true;
+                    }
                 }
 
                 UpdateModValues();
                 progress = 0;
                 checkQueued = false;
-                checkDone = true;
+                checkBusy = false;
+                updateList = true;
             }
         }
 
@@ -341,7 +443,7 @@ namespace Technic_Modpack_Creator
         {
             if (siteMode != "NONE")
             {
-                string downloadFolder = cd + "\\temp\\downloads\\" + MiscFunctions.CleanName(newFileName);
+                downloadBusy = true;
                 Directory.CreateDirectory(downloadFolder);
 
                 WebClient client = new WebClient();
@@ -350,49 +452,69 @@ namespace Technic_Modpack_Creator
                 progress = 10;
                 client.DownloadFileAsync(new Uri(dlSite), downloadFolder + "\\" + newFileName);
             }
+
+            else if (Directory.GetFiles(downloadFolder).Length > 0)
+            {
+                newFileName = Directory.GetFiles(downloadFolder)[0];
+                if (newFileName.EndsWith(".zip") || newFileName.EndsWith(".jar"))
+                {
+                    downloadBusy = true;
+                    MoveDownloadedMod();
+                }
+                else
+                {
+                    downloadQueued = false;
+                }
+            }
+
             else
             {
-                downloadDone = true;
+                downloadQueued = false;
             }
         }
 
         private void modDownloadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            string downloadFolder = cd + "\\temp\\downloads\\" + MiscFunctions.CleanName(newFileName);
-
             try
             {
-                string newFilePath = downloadFolder + "\\" + newFileName;
+                string downloadedFilePath = downloadFolder + "\\" + newFileName;
 
-                if (File.Exists(newFilePath))
+                if (File.Exists(downloadedFilePath))
                 {
-                    ZipFile.ExtractToDirectory(newFilePath, downloadFolder + "\\temp");
+                    ZipFile.ExtractToDirectory(downloadedFilePath, downloadFolder + "\\extract");
                     progress = 100;
-
-                    string newModLocation = cd + "\\modpack\\mods\\" + newFileName;
-                    string oldModLocation = cd + "\\modpack\\mods\\" + modFilename;
-                    File.Delete(newModLocation);
-                    File.Delete(oldModLocation);
-
-                    File.Move(newFilePath, newModLocation);
-                    modFilename = newFileName.ToLower();
-
-                    try
-                    {
-                        Directory.Delete(downloadFolder, true);
-                    }
-                    catch
-                    {}
-
-                    versionLocalRaw = versionLatestRaw;
-                    UpdateModValues();
-                    progress = 0;
-                    downloadQueued = false;
-                    downloadDone = true;
+                    MoveDownloadedMod();
                 }
             }
             catch
             {}
+        }
+
+        private void MoveDownloadedMod()
+        {
+            string newModLocation = cd + "\\modpack\\mods\\" + newFileName;
+            string oldModLocation = cd + "\\modpack\\mods\\" + modFilename;
+            File.Delete(newModLocation);
+            File.Delete(oldModLocation);
+
+            string downloadedFilePath = downloadFolder + "\\" + newFileName;
+            File.Move(downloadedFilePath, newModLocation);
+            modFilename = newFileName.ToLower();
+
+            try
+            {
+                Directory.Delete(downloadFolder, true);
+            }
+            catch
+            { }
+
+            versionLocalRaw = versionLatestRaw;
+            UpdateModValues();
+            progress = 0;
+            downloadQueued = false;
+            downloadBusy = false;
+            updateList = true;
+            canUpdate = false;
         }
 
         private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
