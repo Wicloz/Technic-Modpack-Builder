@@ -124,18 +124,18 @@ namespace Technic_Modpack_Creator
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            for (int i = 0; i < modList.Count; i++)
-            {
-                if (modList[i].updateState != modListView.Items[i].SubItems[5].Text)
-                {
-                    modListView.Items[i].SubItems[5].Text = modList[i].updateState;
-                }
-            }
-
             bool allDone = true;
             bool allDownloadDone = true;
-            foreach (ModInfo mod in modList)
+
+            for (int i = 0; i < modList.Count; i++)
             {
+                ModInfo mod = modList[i];
+
+                if (mod.updateState != modListView.Items[i].SubItems[5].Text)
+                {
+                    modListView.Items[i].SubItems[5].Text = mod.updateState;
+                }
+
                 if (mod.findQueued && !mod.findBusy)
                 {
                     LockButtons();
@@ -165,8 +165,16 @@ namespace Technic_Modpack_Creator
                 if (mod.updateList)
                 {
                     mod.updateList = false;
-                    UpdateModList();
-                    break;
+
+                    if (selectedIndex == i)
+                    {
+                        UpdateModFields();
+                    }
+
+                    modListView.Items[i].SubItems[1].Text = mod.uriState;
+                    modListView.Items[i].SubItems[2].Text = mod.versionLocal;
+                    modListView.Items[i].SubItems[3].Text = mod.versionLatest;
+                    modListView.Items[i].SubItems[4].Text = mod.releaseDate;
                 }
             }
 

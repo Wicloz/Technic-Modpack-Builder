@@ -34,9 +34,11 @@
             this.uriState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.versionLocal = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.versionLatest = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.releaseDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.updateState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.updateListButton = new System.Windows.Forms.Button();
             this.modInfoBox = new System.Windows.Forms.GroupBox();
+            this.canUpdateBox = new System.Windows.Forms.CheckBox();
             this.updateSelectedButton = new System.Windows.Forms.Button();
             this.openSiteButton = new System.Windows.Forms.Button();
             this.linkStatusLabel = new System.Windows.Forms.Label();
@@ -50,8 +52,6 @@
             this.updateModsButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.findSiteButton = new System.Windows.Forms.Button();
-            this.canUpdateBox = new System.Windows.Forms.CheckBox();
-            this.releaseDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.modInfoBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -102,6 +102,11 @@
             this.versionLatest.Text = "Latest Version";
             this.versionLatest.Width = 139;
             // 
+            // releaseDate
+            // 
+            this.releaseDate.Text = "Release Date";
+            this.releaseDate.Width = 124;
+            // 
             // updateState
             // 
             this.updateState.Text = "Update State";
@@ -139,6 +144,18 @@
             this.modInfoBox.TabIndex = 2;
             this.modInfoBox.TabStop = false;
             this.modInfoBox.Text = "Mod Information";
+            // 
+            // canUpdateBox
+            // 
+            this.canUpdateBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.canUpdateBox.AutoSize = true;
+            this.canUpdateBox.Location = new System.Drawing.Point(496, 107);
+            this.canUpdateBox.Name = "canUpdateBox";
+            this.canUpdateBox.Size = new System.Drawing.Size(107, 17);
+            this.canUpdateBox.TabIndex = 9;
+            this.canUpdateBox.Text = "Update Available";
+            this.canUpdateBox.UseVisualStyleBackColor = true;
+            this.canUpdateBox.CheckedChanged += new System.EventHandler(this.canUpdateBox_CheckedChanged);
             // 
             // updateSelectedButton
             // 
@@ -277,22 +294,6 @@
             this.findSiteButton.Text = "Find Mod Websites";
             this.findSiteButton.UseVisualStyleBackColor = true;
             this.findSiteButton.Click += new System.EventHandler(this.findSiteButton_Click);
-            // 
-            // canUpdateBox
-            // 
-            this.canUpdateBox.AutoSize = true;
-            this.canUpdateBox.Location = new System.Drawing.Point(496, 107);
-            this.canUpdateBox.Name = "canUpdateBox";
-            this.canUpdateBox.Size = new System.Drawing.Size(107, 17);
-            this.canUpdateBox.TabIndex = 9;
-            this.canUpdateBox.Text = "Update Available";
-            this.canUpdateBox.UseVisualStyleBackColor = true;
-            this.canUpdateBox.CheckedChanged += new System.EventHandler(this.canUpdateBox_CheckedChanged);
-            // 
-            // releaseDate
-            // 
-            this.releaseDate.Text = "Release Date";
-            this.releaseDate.Width = 124;
             // 
             // ModManager
             // 

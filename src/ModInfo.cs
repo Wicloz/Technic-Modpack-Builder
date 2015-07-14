@@ -183,6 +183,11 @@ namespace Technic_Modpack_Creator
             }
 
             //Manage download site
+            if (website == "http://minecraft.curseforge.com/mc-mods/minecraft")
+            {
+                website = "NONE";
+            }
+
             if (siteMode == "curse")
             {
                 dlSite = website + "/files/latest";
@@ -371,76 +376,85 @@ namespace Technic_Modpack_Creator
 
         private void checkDownloadCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
-            if (e != null && !String.IsNullOrEmpty(e.Result))
+            try
             {
-                progress = 100;
-                using (StringReader sr = new StringReader(e.Result))
+                if (e != null && !String.IsNullOrEmpty(e.Result))
                 {
-                    string newVersion = "";
-                    string newFile = "";
-
-                    if (siteMode == "curse")
+                    progress = 100;
+                    using (StringReader sr = new StringReader(e.Result))
                     {
-                        while (!newVersion.Contains("<a class=\"overflow-tip\" href=\"/mc-mods/"))
+                        string newVersion = "";
+                        string newFile = "";
+
+                        if (siteMode == "curse")
                         {
-                            newVersion = sr.ReadLine().Trim();
+                            while (!newVersion.Contains("<a class=\"overflow-tip\" href=\"/mc-mods/"))
+                            {
+                                newVersion = sr.ReadLine().Trim();
+                            }
+
+                            char[] endCharList = new char[] { '<' };
+                            char[] startCharList = new char[] { '>' };
+                            newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList);
+
+                            string dateLine = sr.ReadLine().Trim();
+                            endCharList = new char[] { '<' };
+                            startCharList = new char[] { '"', '>' };
+                            releaseDate = MiscFunctions.ExtractSection(dateLine, endCharList, startCharList);
                         }
 
-                        char[] endCharList = new char[] {'<'};
-                        char[] startCharList = new char[] {'>'};
-                        newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList);
-
-                        string dateLine = sr.ReadLine().Trim();
-                        endCharList = new char[] {'<'};
-                        startCharList = new char[] {'"','>'};
-                        releaseDate = MiscFunctions.ExtractSection(dateLine, endCharList, startCharList);
-                    }
-
-                    if (siteMode == "forum")
-                    {
-                        while (!newVersion.Contains("<title>"))
+                        if (siteMode == "forum")
                         {
-                            newVersion = sr.ReadLine().Trim();
-                        }
-                        newFile = MiscFunctions.RemoveLetters(newVersion);
-                    }
-
-                    if (siteMode == "github")
-                    {
-                        while (!newVersion.Contains("<a href=\"" + website.Replace("https://github.com", "").Replace("/latest", "/download/")))
-                        {
-                            newVersion = sr.ReadLine().Trim();
+                            while (!newVersion.Contains("<title>"))
+                            {
+                                newVersion = sr.ReadLine().Trim();
+                            }
+                            newFile = MiscFunctions.RemoveLetters(newVersion);
                         }
 
-                        char[] endCharList = new char[] { '"' };
-                        char[] startCharList = new char[] { '/' };
-                        newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList);
+                        if (siteMode == "github")
+                        {
+                            while (!newVersion.Contains("<a href=\"" + website.Replace("https://github.com", "").Replace("/latest", "/download/")))
+                            {
+                                newVersion = sr.ReadLine().Trim();
+                            }
+
+                            char[] endCharList = new char[] { '"' };
+                            char[] startCharList = new char[] { '/' };
+                            newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList);
+                        }
+
+                        if (!newFile.Contains(".zip") && !newFile.Contains(".jar"))
+                        {
+                            newFile += ".jar";
+                        }
+                        if (disabled && !newFile.Contains(".disabled"))
+                        {
+                            newFile += ".disabled";
+                        }
+
+                        versionLatestRaw = newVersion;
+                        newFileName = Path.GetFileName(newFile);
+                        versionLatest = MiscFunctions.RemoveLetters(newFileName);
+
+                        if (versionLatestRaw != versionLocalRaw)
+                        {
+                            canUpdate = true;
+                        }
                     }
 
-                    if (!newFile.Contains(".zip") && !newFile.Contains(".jar"))
-                    {
-                        newFile += ".jar";
-                    }
-                    if (disabled && !newFile.Contains(".disabled"))
-                    {
-                        newFile += ".disabled";
-                    }
-
-                    versionLatestRaw = newVersion;
-                    newFileName = Path.GetFileName(newFile);
-                    versionLatest = MiscFunctions.RemoveLetters(newFileName);
-
-                    if (versionLatestRaw != versionLocalRaw)
-                    {
-                        canUpdate = true;
-                    }
+                    UpdateModValues();
+                    progress = 0;
+                    checkQueued = false;
+                    checkBusy = false;
+                    updateList = true;
                 }
-
-                UpdateModValues();
+            }
+            catch
+            {
                 progress = 0;
                 checkQueued = false;
                 checkBusy = false;
-                updateList = true;
             }
         }
 
