@@ -23,19 +23,21 @@ namespace Technic_Modpack_Creator
 
         public void CreateZipFiles()
         {
+            //Delete old zipfiles
             if (Directory.Exists(zipDirectory))
             {
                 Directory.Delete(zipDirectory, true);
             }
             Directory.CreateDirectory(zipDirectory);
 
+            //Create empty zipfiles
             using (ZipOutputStream zos = new ZipOutputStream(zipDirectory + "\\ClientFiles.zip"))
             { }
             using (ZipOutputStream zos = new ZipOutputStream(zipDirectory + "\\ServerFiles.zip"))
             { }
 
+            //Create list of resourcepacks
             List<string> rpackList = new List<string>();
-
             using (FileStream fs = File.Open(cd + "\\resourcepack\\distribute.txt", FileMode.Open))
             {
                 using (StreamReader sr = new StreamReader(fs))
@@ -56,8 +58,10 @@ namespace Technic_Modpack_Creator
                 }
             }
 
+            //Create client zipfile
             using (Ionic.Zip.ZipFile zip = Ionic.Zip.ZipFile.Read(zipDirectory + "\\ClientFiles.zip"))
             {
+                //Add modpack folders
                 foreach (string folder in Directory.GetDirectories(cd + "\\modpack", "*", SearchOption.AllDirectories))
                 {
                     if (zip.ContainsEntry(folder))
@@ -66,7 +70,7 @@ namespace Technic_Modpack_Creator
                     }
                     zip.AddDirectoryByName(folder.Replace(cd + "\\modpack", ""));
                 }
-
+                //Add resourcepacks
                 foreach (string file in Directory.GetFiles(cd + "\\resourcepack", "*.zip", SearchOption.TopDirectoryOnly))
                 {
                     if (rpackList.Contains(Path.GetFileName(file)))
@@ -78,7 +82,7 @@ namespace Technic_Modpack_Creator
                         zip.AddFile(file, file.Replace(Path.GetFileName(file), "").Replace(cd + "\\resourcepack", "resourcepacks"));
                     }
                 }
-
+                //Add modpack files
                 foreach (string file in Directory.GetFiles(cd + "\\modpack", "*.*", SearchOption.AllDirectories))
                 {
                     if ((Main.acces.includeOptionsBox.Checked || (!file.Contains("\\modpack\\options.txt") && !file.Contains("\\modpack\\optionsof.txt"))) && file != cd + "\\modpack\\bin\\modpack.jar")
@@ -91,6 +95,7 @@ namespace Technic_Modpack_Creator
                     }
                 }
 
+                //Add modpack.jar
                 try
                 {
                     string file = cd + "\\plugins\\mergedjar\\modpack.jar";
@@ -104,7 +109,7 @@ namespace Technic_Modpack_Creator
                 }
                 catch
                 { }
-
+                //Add idfixminus.jar
                 if (File.Exists(cd + "\\plugins\\idfixer\\idfixminus.jar"))
                 {
                     string file = cd + "\\plugins\\idfixer\\idfixminus.jar";
@@ -117,8 +122,8 @@ namespace Technic_Modpack_Creator
                     zip.AddFile(file, zipFolder);
                 }
 
+                //Save zipfile
                 bool succeed = false;
-
                 while (!succeed)
                 {
                     try
@@ -131,8 +136,10 @@ namespace Technic_Modpack_Creator
                 }
             }
 
+            //Create server zipfile
             using (Ionic.Zip.ZipFile zip = Ionic.Zip.ZipFile.Read(zipDirectory + "\\ServerFiles.zip"))
             {
+                //Add server folders
                 foreach (string folder in Directory.GetDirectories(cd + "\\tests\\ServerBuild", "*", SearchOption.AllDirectories))
                 {
                     if (zip.ContainsEntry(folder))
@@ -141,7 +148,7 @@ namespace Technic_Modpack_Creator
                     }
                     zip.AddDirectoryByName(folder.Replace(cd + "\\tests\\ServerBuild", ""));
                 }
-
+                //Add server files
                 foreach (string file in Directory.GetFiles(cd + "\\tests\\ServerBuild", "*.*", SearchOption.AllDirectories))
                 {
                     if (zip.ContainsEntry(file))
@@ -151,8 +158,8 @@ namespace Technic_Modpack_Creator
                     zip.AddFile(file, file.Replace(Path.GetFileName(file), "").Replace(cd + "\\tests\\ServerBuild", ""));
                 }
 
+                //Save zipfile
                 bool succeed = false;
-
                 while (!succeed)
                 {
                     try

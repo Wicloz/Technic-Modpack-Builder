@@ -26,7 +26,7 @@ namespace Technic_Modpack_Creator
         public ModManager()
         {
             InitializeComponent();
-            // Initiate timer
+            //Initiate timer
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = 100;
@@ -217,7 +217,7 @@ namespace Technic_Modpack_Creator
                 modListView.Items.Add(lvi);
             }
 
-            // Selection
+            //Selection
             modListView.SelectedIndices.Clear();
             int index = 0;
 

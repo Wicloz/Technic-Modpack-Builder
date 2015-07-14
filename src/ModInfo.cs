@@ -30,7 +30,7 @@ namespace Technic_Modpack_Creator
         public string siteMode = "NONE";
         public string dlSite = "NONE";
 
-        // Dowload + Check info
+        //Dowload + Check info
         public bool updateList = false;
         public int progress = 0;
         public int findMode = 0;
@@ -148,7 +148,7 @@ namespace Technic_Modpack_Creator
         }
 
         public ModInfo()
-        {}
+        { }
 
         public ModInfo(string fileName)
         {
@@ -157,13 +157,13 @@ namespace Technic_Modpack_Creator
 
         public void UpdateModValues()
         {
-            // Manage local version
+            //Manage local version
             versionLocal = MiscFunctions.RemoveLetters(modFilename);
 
-            // Initialise variables
+            //Initialise variables
             downloadFolder = cd + "\\downloads\\" + MiscFunctions.CleanName(modFilename);
 
-            // Determine site mode
+            //Determine site mode
             if (website == "")
             {
                 website = "NONE";
@@ -182,7 +182,7 @@ namespace Technic_Modpack_Creator
                 siteMode = "NONE";
             }
 
-            // Manage download site
+            //Manage download site
             if (siteMode == "curse")
             {
                 dlSite = website + "/files/latest";
@@ -332,7 +332,7 @@ namespace Technic_Modpack_Creator
                         website = "http://minecraft.curseforge.com" + linkSection;
                     }
                     catch
-                    {}
+                    { }
                 }
 
                 UpdateModValues();
@@ -492,7 +492,7 @@ namespace Technic_Modpack_Creator
                 }
             }
             catch
-            {}
+            { }
         }
 
         private void MoveDownloadedMod()

@@ -18,6 +18,7 @@ namespace Technic_Modpack_Creator
 
         public void BuildServer(string version)
         {
+            //Delete old server
             if (Directory.Exists(cd + "\\tests\\ServerBuild"))
             {
                 bool succes = false;
@@ -34,6 +35,7 @@ namespace Technic_Modpack_Creator
                 }
             }
 
+            //Copy servertemplate
             foreach (string file in Directory.GetFiles(cd + "\\plugins\\server_template", "*.*", SearchOption.AllDirectories))
             {
                 string newFile = file.Replace("\\plugins\\server_template", "\\tests\\ServerBuild");
@@ -42,9 +44,11 @@ namespace Technic_Modpack_Creator
                 File.Copy(file, newFile, true);
             }
 
+            //Setup directory and version
             Directory.CreateDirectory(cd + "\\tests\\ServerBuild\\backups");
             File.WriteAllText(cd + "\\tests\\ServerBuild\\currentversion.dat", version);
 
+            //Copy forgemodloader
             foreach (string file in Directory.GetFiles(cd + "\\plugins\\forgemodloader", "*forge*.jar"))
             {
                 File.Copy(file, cd + "\\tests\\ServerBuild\\modpack.jar");
@@ -53,6 +57,7 @@ namespace Technic_Modpack_Creator
             List<string> fileList = new List<string>();
             List<string> exceptionList = new List<string>();
 
+            //Load exeption list
             using (FileStream fs = File.Open(cd + "\\settings\\mpexceptions.txt", FileMode.Open))
             {
                 using (StreamReader sr = new StreamReader(fs))
@@ -73,6 +78,7 @@ namespace Technic_Modpack_Creator
                 }
             }
 
+            //Determine files to copy
             foreach (string file in Directory.GetFiles(cd + "\\modpack", "*.*", SearchOption.AllDirectories))
             {
                 string path = Path.GetDirectoryName(file);
@@ -97,6 +103,7 @@ namespace Technic_Modpack_Creator
                 }
             }
 
+            //Copy mod files
             foreach (string file in fileList)
             {
                 string newFile = file.Replace("\\modpack", "\\tests\\ServerBuild");
@@ -128,23 +135,28 @@ namespace Technic_Modpack_Creator
             server.Start();
         }
 
+
+        private void server_Exited(object sender, EventArgs e)
+        {
+            MessageBox.Show("Server Closed");
+        }
+
         public void DoneTesting()
         {
+            //Close running server
             foreach (Process p in Process.GetProcessesByName("cmd"))
             {
                 p.Kill();
             }
 
+            //Copy server properties
             string properties1 = cd + "\\tests\\ServerBuild\\server.properties";
             string properties2 = cd + "\\plugins\\server_template\\server.properties";
+            File.Delete(properties2);
+            File.Copy(properties1, properties2, true);
 
-            if (File.Exists(properties1) && !File.Exists(properties2))
-            {
-                File.Copy(properties1, properties2);
-            }
-
+            //Delete server folder
             bool succeed = false;
-
             while (!succeed)
             {
                 try
@@ -155,11 +167,6 @@ namespace Technic_Modpack_Creator
                 catch
                 { }
             }
-        }
-
-        private void server_Exited(object sender, EventArgs e)
-        {
-            MessageBox.Show("Server Closed");
         }
     }
 }
