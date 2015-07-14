@@ -195,7 +195,7 @@ namespace Technic_Modpack_Creator
             findSiteButton.Enabled = true;
             updateCheckButton.Enabled = true;
             updateModsButton.Enabled = true;
-            updateSelectedButton.Enabled = true;
+            updateSelectedButton.Enabled = selectedMod.canUpdate;
             action = false;
         }
 
@@ -210,7 +210,7 @@ namespace Technic_Modpack_Creator
                 lvi.SubItems.Add(mod.uriState);
                 lvi.SubItems.Add(mod.versionLocal);
                 lvi.SubItems.Add(mod.versionLatest);
-                lvi.SubItems.Add(mod.versionLatest);
+                lvi.SubItems.Add(mod.releaseDate);
                 lvi.SubItems.Add(mod.updateState);
 
                 lvi.Checked = !mod.disabled;

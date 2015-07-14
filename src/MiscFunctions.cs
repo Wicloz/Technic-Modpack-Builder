@@ -74,7 +74,7 @@ namespace Technic_Modpack_Creator
         {
             string returnString = "";
             bool foundChars = false;
-            char[] charArray = s.Replace(" ", "").ToCharArray();
+            char[] charArray = s.ToCharArray();
             int checkChar = 0;
 
             foreach (char c in charArray)

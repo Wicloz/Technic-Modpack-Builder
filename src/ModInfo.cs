@@ -386,9 +386,14 @@ namespace Technic_Modpack_Creator
                             newVersion = sr.ReadLine().Trim();
                         }
 
-                        char[] endCharList = new char[] { '<', '"' };
-                        char[] startCharList = new char[] { '>' };
+                        char[] endCharList = new char[] {'<'};
+                        char[] startCharList = new char[] {'>'};
                         newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList);
+
+                        string dateLine = sr.ReadLine().Trim();
+                        endCharList = new char[] {'<'};
+                        startCharList = new char[] {'"','>'};
+                        releaseDate = MiscFunctions.ExtractSection(dateLine, endCharList, startCharList);
                     }
 
                     if (siteMode == "forum")
