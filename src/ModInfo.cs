@@ -104,6 +104,11 @@ namespace Technic_Modpack_Creator
             versionLocal = MiscFunctions.RemoveLetters(modFilename);
 
             // Determine site mode
+            if (website == "")
+            {
+                website = "NONE";
+            }
+
             if (website.Contains("minecraft.curseforge.com"))
             {
                 siteMode = "curse";
@@ -138,18 +143,20 @@ namespace Technic_Modpack_Creator
 
         public void FindWebsiteUri()
         {
-            WebClient client = new WebClient();
-            client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(findCurseCompleted);
+            WebClient client1 = new WebClient();
+            client1.DownloadStringCompleted += new DownloadStringCompletedEventHandler(findCurseCompleted);
+            WebClient client2 = new WebClient();
+            client2.DownloadStringCompleted += new DownloadStringCompletedEventHandler(findGoogleCompleted);
             progress = 0;
             findMode++;
 
             switch (findMode)
             {
                 case 1:
-                    client.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanName(modFilename)));
+                    client1.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanName(modFilename)));
                     break;
                 case 2:
-                    client.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanName(modFilename).Replace("mc", "").Replace("r", "").Replace("v", "")));
+                    client2.DownloadStringAsync(new Uri("http://www.google.com/search?&sourceid=navclient&btnI=I&q=" + MiscFunctions.CleanName(modFilename) + "+curseforge"));
                     break;
 
                 default:
@@ -196,6 +203,46 @@ namespace Technic_Modpack_Creator
                             break;
                         }
                     }
+                }
+
+                UpdateModValues();
+
+                if (siteMode == "NONE")
+                {
+                    FindWebsiteUri();
+                }
+                else
+                {
+                    progress = 0;
+                    findMode = 0;
+                    findQueued = false;
+                    findDone = true;
+                }
+            }
+        }
+
+        private void findGoogleCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            if (e != null && !String.IsNullOrEmpty(e.Result))
+            {
+                using (StringReader sr = new StringReader(e.Result))
+                {
+                    string currentline = "";
+
+                    try
+                    {
+                        while (!currentline.Contains("<a href=\"/mc-mods/"))
+                        {
+                            currentline = sr.ReadLine().Trim();
+                        }
+
+                        char[] endCharList = new char[] {'"'};
+                        char[] startCharList = new char[] {'=','"'};
+                        string linkSection = MiscFunctions.ExtractSection(currentline, endCharList, startCharList);
+                        website = "http://minecraft.curseforge.com" + linkSection;
+                    }
+                    catch
+                    {}
                 }
 
                 UpdateModValues();
