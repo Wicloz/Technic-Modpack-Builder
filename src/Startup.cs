@@ -41,8 +41,7 @@ namespace Technic_Modpack_Creator
         private Thread stuff;
 
         private void EmptyFunction()
-        {
-        }
+        { }
 
         public Startup()
         {
@@ -186,6 +185,11 @@ namespace Technic_Modpack_Creator
             if (Directory.Exists(cd + "\\temp"))
             {
                 Directory.Delete(cd + "\\temp", true);
+            }
+
+            if (Directory.GetDirectories(cd + "\\downloads").Length == 0)
+            {
+                Directory.Delete(cd + "\\downloads", true);
             }
 
             taskDone = true;
