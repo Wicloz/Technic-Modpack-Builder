@@ -152,8 +152,11 @@ namespace Technic_Modpack_Creator
             //Copy server properties
             string properties1 = cd + "\\tests\\ServerBuild\\server.properties";
             string properties2 = cd + "\\plugins\\server_template\\server.properties";
-            File.Delete(properties2);
-            File.Copy(properties1, properties2, true);
+            if (File.Exists(properties1))
+            {
+                File.Delete(properties2);
+                File.Copy(properties1, properties2, true);
+            }
 
             //Delete server folder
             bool succeed = false;

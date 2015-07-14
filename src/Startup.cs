@@ -27,13 +27,21 @@ namespace Technic_Modpack_Creator
                                         "Cleaning Up ...",
                                         "Creating Files ...",
                                         "Downloading TechnicLauncher ...",
-                                        "Downloading Server Files ..."
+                                        "Downloading Server Files ...",
+                                        "Downloading Server Files ...",
+                                        "Downloading Client Files ...",
+                                        "Downloading Client Files ...",
+                                        "Downloading Client Files ..."
                                      };
 
         private ProgressBarStyle[] pbStyle = {
                                                 ProgressBarStyle.Marquee,
                                                 ProgressBarStyle.Marquee,
                                                 ProgressBarStyle.Marquee,
+                                                ProgressBarStyle.Continuous,
+                                                ProgressBarStyle.Continuous,
+                                                ProgressBarStyle.Continuous,
+                                                ProgressBarStyle.Continuous,
                                                 ProgressBarStyle.Continuous,
                                                 ProgressBarStyle.Continuous
                                              };
@@ -54,7 +62,7 @@ namespace Technic_Modpack_Creator
 
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Tick += new EventHandler(timer_Tick);
-            timer.Interval = 100;
+            timer.Interval = 20;
             timer.Start();
 
             if (File.Exists(cd + "\\temp\\modpack.jar"))
@@ -95,7 +103,7 @@ namespace Technic_Modpack_Creator
                 return;
             }
 
-            else if (stuffIndex == 3 || stuffIndex == 4)
+            else if (stuffIndex <= 8)
             {
                 stuff = new Thread(DownloadFile);
                 stuff.Start();
@@ -111,7 +119,7 @@ namespace Technic_Modpack_Creator
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            if (stuffIndex >= 0 && stuffIndex <= 4)
+            if (stuffIndex >= 0 && stuffIndex <= 8)
             {
                 label.Text = labelText[stuffIndex];
                 progressBar.Style = pbStyle[stuffIndex];
@@ -139,6 +147,7 @@ namespace Technic_Modpack_Creator
             Directory.CreateDirectory(cd + "\\plugins\\forgemodloader");
             Directory.CreateDirectory(cd + "\\plugins\\idfixer");
             Directory.CreateDirectory(cd + "\\plugins\\server_template");
+            Directory.CreateDirectory(cd + "\\plugins\\client_template");
             Directory.CreateDirectory(cd + "\\plugins\\mergedjar");
 
             Directory.CreateDirectory(cd + "\\export\\versions");
@@ -197,6 +206,9 @@ namespace Technic_Modpack_Creator
 
         private void DownloadFile()
         {
+            SettingManager settings = new SettingManager();
+            string version = settings.minecraftVersionLoad;
+
             if (stuffIndex == 3)
             {
                 if (!File.Exists(cd + "\\plugins\\TechnicLauncher.exe"))
@@ -234,6 +246,75 @@ namespace Technic_Modpack_Creator
 
                 return;
             }
+
+            else if (stuffIndex == 5)
+            {
+                if (version != "" && !File.Exists(cd + "\\plugins\\server_template\\minecraft_server." + version + ".jar"))
+                {
+                    WebClient client = new WebClient();
+                    client.DownloadFileAsync(new Uri("https://s3.amazonaws.com/Minecraft.Download/versions/" + version + "/minecraft_server." + version + ".jar"), cd + "\\plugins\\server_template\\minecraft_server." + version + ".jar");
+                    client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                }
+                else
+                {
+                    taskDone = true;
+                }
+
+                return;
+            }
+
+            else if (stuffIndex == 6)
+            {
+                if (!Directory.Exists(cd + "\\plugins\\client_template\\bin\\natives"))
+                {
+                    Directory.CreateDirectory(cd + "\\temp");
+                    WebClient client = new WebClient();
+                    client.DownloadFileAsync(new Uri("https://dl.dropboxusercontent.com/u/46484032/TMC/ClientTemplate.zip"), cd + "\\temp\\client.zip");
+                    client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                }
+                else
+                {
+                    taskDone = true;
+                }
+
+                return;
+            }
+
+            else if (stuffIndex == 7)
+            {
+                if (version != "" && !File.Exists(cd + "\\plugins\\client_template\\bin\\minecraft.jar"))
+                {
+                    WebClient client = new WebClient();
+                    client.DownloadFileAsync(new Uri("https://s3.amazonaws.com/Minecraft.Download/versions/" + version + "/" + version + ".jar"), cd + "\\plugins\\client_template\\bin\\minecraft.jar");
+                    client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                }
+                else
+                {
+                    taskDone = true;
+                }
+
+                return;
+            }
+
+            else if (stuffIndex == 8)
+            {
+                if (version != "" && !File.Exists(cd + "\\plugins\\client_template\\bin\\" + version + ".json"))
+                {
+                    WebClient client = new WebClient();
+                    client.DownloadFileAsync(new Uri("https://s3.amazonaws.com/Minecraft.Download/versions/" + version + "/" + version + ".json"), cd + "\\plugins\\client_template\\bin\\" + version + ".json");
+                    client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                }
+                else
+                {
+                    taskDone = true;
+                }
+
+                return;
+            }
         }
 
         private void ProcessFile()
@@ -241,6 +322,12 @@ namespace Technic_Modpack_Creator
             if (stuffIndex == 4)
             {
                 ZipFile.ExtractToDirectory(cd + "\\temp\\server.zip", cd + "\\plugins\\server_template");
+                Directory.Delete(cd + "\\temp", true);
+            }
+
+            if (stuffIndex == 6)
+            {
+                ZipFile.ExtractToDirectory(cd + "\\temp\\client.zip", cd + "\\plugins\\client_template");
                 Directory.Delete(cd + "\\temp", true);
             }
 

@@ -72,7 +72,7 @@ namespace Technic_Modpack_Creator
                     MergeModpackJar();
                     fileLists.SaveLists(modpackVersionBox.Text);
 
-                    if (!testClient.StartTesting())
+                    if (!testClient.BuildClient())
                     {
                         testButtonClient.Text = "Test Modpack Client";
                         buttonStartLauncher.Enabled = false;
@@ -80,6 +80,10 @@ namespace Technic_Modpack_Creator
                         setupButton.Enabled = true;
                         manageModsButton.Enabled = true;
                         testModeA = 1;
+                    }
+                    else
+                    {
+                        testClient.StartClientBuild();
                     }
                 }
             }
@@ -107,6 +111,7 @@ namespace Technic_Modpack_Creator
                     testModeB = 2;
 
                     MakeLowerCases();
+                    MergeModpackJar();
                     fileLists.SaveLists(modpackVersionBox.Text);
 
                     testServer.BuildServer(modpackVersionBox.Text);
@@ -144,17 +149,9 @@ namespace Technic_Modpack_Creator
 
         private void setupButton_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(appdata + "\\.technic\\modpacks\\vanilla"))
-            {
-                Directory.Delete(appdata + "\\.technic\\modpacks\\vanilla", true);
-            }
-
-            Process launcher = new Process();
-            launcher.StartInfo.FileName = cd + "\\plugins\\TechnicLauncher.exe";
-            launcher.StartInfo.Arguments = "";
-            launcher.Start();
-
-            MessageBox.Show("Do this:\n1) Select 'Vanilla' in the list on the left under 'Modpacks'.\n2) Click 'Modpack Options' (not 'Launcher Options') in the upper right corner.\n3) Select the version that matches the version of your modpack under 'A Specific Version' and click on 'Reinstall Pack'.\n4) Accept the dialog box, close the option screen and press 'Install'.\n5) After Minecraft has finished downloading, press 'Start'.\n6) After minecraft started, close it again.\n7) Done!", "Do These Things !!!");
+            Process.Start("http://www.technicpack.net/modpack/dummy-pack-1710.694377");
+            Proci.StartLauncher();
+            MessageBox.Show("Do this:\n1) Add the modpack on the page that just opened to your list.\n2) Install and run this new modpack.\n3) After minecraft has started, close it again.\n4) In the future, use this pack when testing your mods.", "Do These Things !!!");
         }
 
         private void OpenSite()
@@ -293,21 +290,7 @@ namespace Technic_Modpack_Creator
 
         private void getServerButton_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (minecraftVersionBox.Text.Substring(1, 1) == "." && minecraftVersionBox.Text.Substring(3, 1) == ".")
-                {
-                    Process.Start("https://s3.amazonaws.com/Minecraft.Download/versions/" + minecraftVersionBox.Text + "/minecraft_server." + minecraftVersionBox.Text + ".jar");
-                }
-                else
-                {
-                    Process.Start("https://mcversions.net/");
-                }
-            }
-            catch
-            {
-                Process.Start("https://mcversions.net/");
-            }
+            Process.Start("https://mcversions.net/");
         }
 
         private void manageModsButton_Click(object sender, EventArgs e)
@@ -317,7 +300,7 @@ namespace Technic_Modpack_Creator
 
         private void openModpackFolder_Click(object sender, EventArgs e)
         {
-            Process.Start(appdata + "\\.technic\\modpacks\\vanilla");
+            Process.Start(appdata + "\\.technic\\modpacks\\dummy-pack-1710");
         }
 
         private void openThisFolder_Click(object sender, EventArgs e)
@@ -327,7 +310,7 @@ namespace Technic_Modpack_Creator
 
         private void buttonStartLauncher_Click(object sender, EventArgs e)
         {
-            Proci.StartLauncher();
+            testClient.StartClientBuild();
         }
     }
 }

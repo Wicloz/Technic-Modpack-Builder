@@ -119,17 +119,16 @@
   </resheader>
   <data name="textBox1.Text" xml:space="preserve">
     <value>Things you have to do:
-1) Fill in all the fields on the left.
-2) Click the "Setup Testing Enviroment" button.
+0) Fill in all the fields on the left.
+1) Click the "Setup Testing Enviroment" button.
 
-3) Download a version of Forge and put it into /plugins/forgemodloader.
-4) If you are on 1.6.4 or lower, download idfixminus, rename it as it says on the forum page, and put it into /plugins/idfixer.
-5) Download the minecraft server for your version and put the minecraft_server.x.x.x.jar into /plugins/server_template.
+2) Download a version of Forge and put it into /plugins/forgemodloader.
+3) If you are on 1.6.4 or lower, download idfixminus, rename it as it says on the forum page, and put it into /plugins/idfixer.
 
-6) Download and install mods into /modpack.
-7) Test the Client and Server.
-8) Build the Client and Server.
-9) Enjoy your modpack !</value>
+4) Download and install mods into /modpack.
+5) Test the Client and Server.
+6) Build a Modpack release.
+7) Enjoy your modpack !</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

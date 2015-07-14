@@ -15,18 +15,23 @@ namespace Technic_Modpack_Creator
     {
         private string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private string cd = Directory.GetCurrentDirectory();
+        private string testFolder;
 
-        public bool StartTesting()
+        public bool BuildClient()
         {
+            testFolder = appdata + "\\.technic\\modpacks\\dummy-pack-1710";
+            //testFolder = cd + "\\tests\\ClientBuild";
+
+            //Delete folders
             string[] deleteFolders = {
-                                        "\\.technic\\modpacks\\vanilla\\config",
-                                        "\\.technic\\modpacks\\vanilla\\coremods",
-                                        "\\.technic\\modpacks\\vanilla\\Flan",
-                                        "\\.technic\\modpacks\\vanilla\\hats",
-                                        "\\.technic\\modpacks\\vanilla\\mods",
-                                        "\\.technic\\modpacks\\vanilla\\scripts",
-                                        "\\.technic\\modpacks\\vanilla\\journeymap",
-                                        "\\.technic\\modpacks\\vanilla\\betterrecords"
+                                        testFolder + "\\config",
+                                        testFolder + "\\coremods",
+                                        testFolder + "\\Flan",
+                                        testFolder + "\\hats",
+                                        testFolder + "\\mods",
+                                        testFolder + "\\scripts",
+                                        testFolder + "\\journeymap",
+                                        testFolder + "\\betterrecords"
                                      };
 
             foreach (string folder in deleteFolders)
@@ -48,16 +53,12 @@ namespace Technic_Modpack_Creator
                 }
             }
 
-            if (File.Exists(appdata + "\\.technic\\modpacks\\vanilla\\bin\\modpack.jar"))
+            //Copy client_template
+            if (!File.Exists(testFolder + "\\bin\\minecraft.jar"))
             {
-                File.Delete(appdata + "\\.technic\\modpacks\\vanilla\\bin\\modpack.jar");
-            }
-
-            foreach (string file in Directory.GetFiles(cd + "\\modpack", "*.*", SearchOption.AllDirectories))
-            {
-                if (file != cd + "\\modpack\\bin\\modpack.jar")
+                foreach (string file in Directory.GetFiles(cd + "\\plugins\\client_template", "*.*", SearchOption.AllDirectories))
                 {
-                    string newFile = file.Replace(cd + "\\modpack", appdata + "\\.technic\\modpacks\\vanilla");
+                    string newFile = file.Replace(cd + "\\plugins\\client_template", testFolder);
 
                     Directory.CreateDirectory(Path.GetDirectoryName(newFile));
                     File.Delete(newFile);
@@ -65,10 +66,31 @@ namespace Technic_Modpack_Creator
                 }
             }
 
+            //Delete modpack.jar
+            if (File.Exists(testFolder + "\\bin\\modpack.jar"))
+            {
+                File.Delete(testFolder + "\\bin\\modpack.jar");
+            }
+
+            //Copy files
+            foreach (string file in Directory.GetFiles(cd + "\\modpack", "*.*", SearchOption.AllDirectories))
+            {
+                if (file != cd + "\\modpack\\bin\\modpack.jar")
+                {
+                    string newFile = file.Replace(cd + "\\modpack", testFolder);
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+                    File.Delete(newFile);
+                    File.Copy(file, newFile, true);
+                }
+            }
+
+            //Copy modpack.jar
             try
             {
                 string file = cd + "\\plugins\\mergedjar\\modpack.jar";
-                string newFile = appdata + "\\.technic\\modpacks\\vanilla\\bin\\modpack.jar";
+                string newFile = testFolder + "\\bin\\modpack.jar";
+                File.Delete(newFile);
                 File.Copy(file, newFile, true);
             }
             catch
@@ -76,34 +98,60 @@ namespace Technic_Modpack_Creator
                 return false;
             }
 
+            //Copy idfixminus.jar
             if (File.Exists(cd + "\\plugins\\idfixer\\idfixminus.jar"))
             {
-                File.Copy(cd + "\\plugins\\idfixer\\idfixminus.jar", appdata + "\\.technic\\modpacks\\vanilla\\mods\\idfixminus.jar", true);
+                File.Copy(cd + "\\plugins\\idfixer\\idfixminus.jar", testFolder + "\\mods\\idfixminus.jar", true);
             }
 
+            //Copy resourcepack
             foreach (string file in Directory.GetFiles(cd + "\\resourcepack", "*.zip", SearchOption.TopDirectoryOnly))
             {
-                string newFile = file.Replace(cd + "\\resourcepack", appdata + "\\.technic\\modpacks\\vanilla\\resourcepacks");
+                string newFile = file.Replace(cd + "\\resourcepack", testFolder + "\\resourcepacks");
 
                 Directory.CreateDirectory(Path.GetDirectoryName(newFile));
                 File.Delete(newFile);
                 File.Copy(file, newFile, true);
             }
 
-            Proci.StartLauncher();
+            //End
             return true;
+        }
+
+        public void StartClientBuild()
+        {
+            Process minecraft = new Process();
+            string libString = "";
+
+            foreach (string file in Directory.GetFiles(appdata + "\\.technic\\cache", "*.jar", SearchOption.AllDirectories))
+            {
+                if (!file.Contains("minecraft_"))
+                {
+                    libString += file + ";";
+                }
+            }
+
+            //minecraft.StartInfo.FileName = "java.exe";
+            //minecraft.StartInfo.WorkingDirectory = cd + "\\tests\\ClientBuild";
+            //minecraft.StartInfo.Arguments = "-Djava.library.path=\"bin\\natives\" -cp \""+libString+"bin\\modpack.jar;bin\\minecraft.jar\" net.minecraft.client.main.Main --username myusername --accessToken myaccesstoken --userProperties {} --version 1.7.10";
+
+            //minecraft.Start();
+
+            Proci.StartLauncher();
         }
 
         public void DoneTesting ()
         {
+            //Prepare build folder
             Directory.Delete(cd + "\\modpack\\config", true);
             Directory.CreateDirectory(cd + "\\modpack\\config");
 
-            foreach (string file in Directory.GetFiles(appdata + "\\.technic\\modpacks\\vanilla", "*.cfg", SearchOption.AllDirectories))
+            //Copy all configs
+            foreach (string file in Directory.GetFiles(testFolder, "*.cfg", SearchOption.AllDirectories))
             {
                 if (!file.Contains("\\modpacks\\vanilla\\asm") && !file.Contains("\\modpacks\\vanilla\\saves") && !file.Contains("\\modpacks\\vanilla\\crash-reports") && !file.Contains("\\modpacks\\vanilla\\backups") && !file.Contains("\\modpacks\\vanilla\\compendiumunlocks"))
                 {
-                    string newFile = file.Replace(appdata + "\\.technic\\modpacks\\vanilla", cd + "\\modpack");
+                    string newFile = file.Replace(testFolder, cd + "\\modpack");
 
                     Directory.CreateDirectory(Path.GetDirectoryName(newFile));
                     File.Delete(newFile);
@@ -111,7 +159,7 @@ namespace Technic_Modpack_Creator
                 }
             }
 
-            foreach (string file in Directory.GetFiles(appdata + "\\.technic\\modpacks\\vanilla", "*.txt", SearchOption.AllDirectories))
+            foreach (string file in Directory.GetFiles(testFolder, "*.txt", SearchOption.AllDirectories))
             {
                 if (!file.Contains("\\modpacks\\vanilla\\asm") && !file.Contains("\\modpacks\\vanilla\\saves") && !file.Contains("\\modpacks\\vanilla\\crash-reports") && !file.Contains("\\modpacks\\vanilla\\backups") && !file.Contains("\\modpacks\\vanilla\\compendiumunlocks") && !file.Contains("\\modpacks\\vanilla\\betterrain\\null.txt"))
                 {
@@ -123,29 +171,31 @@ namespace Technic_Modpack_Creator
                 }
             }
 
-            if (File.Exists(appdata + "\\.technic\\modpacks\\vanilla\\options.txt"))
+            //Copy options
+            if (File.Exists(testFolder + "\\options.txt"))
             {
-                File.Copy(appdata + "\\.technic\\modpacks\\vanilla\\options.txt", cd + "\\modpack\\options.txt", true);
+                File.Copy(testFolder + "\\options.txt", cd + "\\modpack\\options.txt", true);
             }
 
-            if (File.Exists(appdata + "\\.technic\\modpacks\\vanilla\\optionsof.txt"))
+            if (File.Exists(testFolder + "\\optionsof.txt"))
             {
-                File.Copy(appdata + "\\.technic\\modpacks\\vanilla\\optionsof.txt", cd + "\\modpack\\optionsof.txt", true);
+                File.Copy(testFolder + "\\optionsof.txt", cd + "\\modpack\\optionsof.txt", true);
             }
 
-            foreach (string file in Directory.GetFiles(appdata + "\\.technic\\modpacks\\vanilla\\config", "*.*", SearchOption.AllDirectories))
+            //Copy specific folders
+            foreach (string file in Directory.GetFiles(testFolder + "\\config", "*.*", SearchOption.AllDirectories))
             {
-                string newFile = file.Replace(appdata + "\\.technic\\modpacks\\vanilla", cd + "\\modpack");
+                string newFile = file.Replace(testFolder, cd + "\\modpack");
 
                 Directory.CreateDirectory(Path.GetDirectoryName(newFile));
                 File.Copy(file, newFile, true);
             }
 
-            if (Directory.Exists(appdata + "\\.technic\\modpacks\\vanilla\\scripts"))
+            if (Directory.Exists(testFolder + "\\scripts"))
             {
-                foreach (string file in Directory.GetFiles(appdata + "\\.technic\\modpacks\\vanilla\\scripts", "*.*", SearchOption.AllDirectories))
+                foreach (string file in Directory.GetFiles(testFolder + "\\scripts", "*.*", SearchOption.AllDirectories))
                 {
-                    string newFile = file.Replace(appdata + "\\.technic\\modpacks\\vanilla", cd + "\\modpack");
+                    string newFile = file.Replace(testFolder, cd + "\\modpack");
 
                     Directory.CreateDirectory(Path.GetDirectoryName(newFile));
                     File.Copy(file, newFile, true);
