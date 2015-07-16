@@ -67,6 +67,7 @@
     <Compile Include="ModManager.Designer.cs">
       <DependentUpon>ModManager.cs</DependentUpon>
     </Compile>
+    <Compile Include="ModUriDatabase.cs" />
     <Compile Include="Proci.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
