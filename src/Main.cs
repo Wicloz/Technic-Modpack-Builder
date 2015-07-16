@@ -231,7 +231,7 @@ namespace Technic_Modpack_Creator
 
         public void MakeLowerCases ()
         {
-            foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods", "*.zip", SearchOption.AllDirectories))
+            foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods", "*.zip", SearchOption.TopDirectoryOnly))
             {
                 bool succes = false;
 
@@ -247,7 +247,7 @@ namespace Technic_Modpack_Creator
                 }
             }
 
-            foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods", "*.jar", SearchOption.AllDirectories))
+            foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods", "*.jar", SearchOption.TopDirectoryOnly))
             {
                 bool succes = false;
 
