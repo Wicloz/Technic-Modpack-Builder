@@ -36,7 +36,7 @@ namespace Technic_Modpack_Creator
 
             foreach (string folder in deleteFolders)
             {
-                if (Directory.Exists(appdata + folder))
+                if (Directory.Exists(folder))
                 {
                     bool succes = false;
 
@@ -44,7 +44,7 @@ namespace Technic_Modpack_Creator
                     {
                         try
                         {
-                            Directory.Delete(appdata + folder, true);
+                            Directory.Delete(folder, true);
                             succes = true;
                         }
                         catch
@@ -143,13 +143,13 @@ namespace Technic_Modpack_Creator
         public void DoneTesting ()
         {
             //Prepare build folder
-            Directory.Delete(cd + "\\modpack\\config", true);
+            //Directory.Delete(cd + "\\modpack\\config", true);
             Directory.CreateDirectory(cd + "\\modpack\\config");
 
             //Copy all configs
             foreach (string file in Directory.GetFiles(testFolder, "*.cfg", SearchOption.AllDirectories))
             {
-                if (!file.Contains("\\modpacks\\vanilla\\asm") && !file.Contains("\\modpacks\\vanilla\\saves") && !file.Contains("\\modpacks\\vanilla\\crash-reports") && !file.Contains("\\modpacks\\vanilla\\backups") && !file.Contains("\\modpacks\\vanilla\\compendiumunlocks"))
+                if (!file.Contains(testFolder + "\\asm") && !file.Contains(testFolder + "\\saves") && !file.Contains(testFolder + "\\crash-reports") && !file.Contains(testFolder + "\\backups") && !file.Contains(testFolder + "\\compendiumunlocks"))
                 {
                     string newFile = file.Replace(testFolder, cd + "\\modpack");
 
@@ -161,9 +161,9 @@ namespace Technic_Modpack_Creator
 
             foreach (string file in Directory.GetFiles(testFolder, "*.txt", SearchOption.AllDirectories))
             {
-                if (!file.Contains("\\modpacks\\vanilla\\asm") && !file.Contains("\\modpacks\\vanilla\\saves") && !file.Contains("\\modpacks\\vanilla\\crash-reports") && !file.Contains("\\modpacks\\vanilla\\backups") && !file.Contains("\\modpacks\\vanilla\\compendiumunlocks") && !file.Contains("\\modpacks\\vanilla\\betterrain\\null.txt"))
+                if (!file.Contains(testFolder + "\\asm") && !file.Contains(testFolder + "\\saves") && !file.Contains(testFolder + "\\crash-reports") && !file.Contains(testFolder + "\\backups") && !file.Contains(testFolder + "\\compendiumunlocks") && !file.Contains(testFolder + "\\betterrain\\null.txt"))
                 {
-                    string newFile = file.Replace(appdata + "\\.technic\\modpacks\\vanilla", cd + "\\modpack");
+                    string newFile = file.Replace(testFolder, cd + "\\modpack");
 
                     Directory.CreateDirectory(Path.GetDirectoryName(newFile));
                     File.Delete(newFile);
