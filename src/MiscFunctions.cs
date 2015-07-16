@@ -8,9 +8,31 @@ namespace Technic_Modpack_Creator
 {
     class MiscFunctions
     {
-        public static string CleanName(string originalName)
+        public static bool PartialMatch (string localName, string onlineName)
         {
-            return originalName
+            string cleanS1 = CleanString(CleanModName(localName)).Replace("mod", "");
+            string cleanS2 = CleanString(onlineName).Replace("mod", "");
+
+            if (cleanS1.Contains(cleanS2) || cleanS2.Contains(cleanS1))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static string CleanModName(string originalName)
+        {
+            char[] delim = new char[] { '-' };
+            string proDash = originalName.Split(delim)[0];
+            return CleanString(proDash).Replace("botaniar","botania");
+        }
+
+        public static string CleanString(string originalString)
+        {
+            return originalString
                 .ToLower()
                     .Replace("0", "")
                     .Replace("1", "")
@@ -29,7 +51,11 @@ namespace Technic_Modpack_Creator
                     .Replace("-", "")
                     .Replace("_", "")
                     .Replace(" ", "")
-                    .Replace(".", "");
+                    .Replace(".", "")
+                    .Replace("[", "")
+                    .Replace("]", "")
+                    .Replace("(", "")
+                    .Replace("}", "");
         }
 
         public static string RemoveLetters(string originalString)
@@ -70,8 +96,21 @@ namespace Technic_Modpack_Creator
             return returnString.Replace(".#", "").Replace("#.", "").Replace("#", "").Replace("..", ".").Replace("..", ".").Replace("..", ".");
         }
 
+        public static string ExtractSection(string s, char[] endChars)
+        {
+            string _s = "##" + s;
+            char[] startCharList = new char[] { '#', '#' };
+            return MiscFunctions.ExtractSection(_s, endChars, startCharList);
+        }
+
         public static string ExtractSection(string s, char[] endChars, char[] startChars)
         {
+            if (startChars == null || startChars.Length == 0)
+            {
+                s = "##" + s;
+                startChars = new char[] { '#', '#' };
+            }
+
             string returnString = "";
             bool foundChars = false;
             char[] charArray = s.ToCharArray();

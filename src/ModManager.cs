@@ -16,6 +16,7 @@ namespace Technic_Modpack_Creator
     {
         private List<ModInfo> modList = new List<ModInfo>();
         private string cd = Directory.GetCurrentDirectory();
+        private ModUriDatabase uriDatabase = new ModUriDatabase();
 
         private ModInfo selectedMod;
         private int selectedIndex = -1;
@@ -35,6 +36,7 @@ namespace Technic_Modpack_Creator
 
         private void ModManager_Load(object sender, EventArgs e)
         {
+            uriDatabase.LoadDatabases();
             LoadModList();
             UpdateModList();
         }
@@ -42,6 +44,7 @@ namespace Technic_Modpack_Creator
         private void ModManager_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveModList();
+            uriDatabase.SaveDatabases();
         }
 
         private void LoadModList()
@@ -136,17 +139,17 @@ namespace Technic_Modpack_Creator
                     modListView.Items[i].SubItems[5].Text = mod.updateState;
                 }
 
-                if (mod.findQueued && !mod.findBusy)
+                if (mod.findQueued && !mod.isWorking)
                 {
                     LockButtons();
                     mod.FindWebsiteUri();
                 }
-                else if (mod.checkQueued && !mod.checkBusy)
+                else if (mod.checkQueued && !mod.isWorking)
                 {
                     LockButtons();
                     mod.CheckForUpdate();
                 }
-                else if (mod.downloadQueued && !mod.downloadBusy && !downloadBusy)
+                else if (mod.downloadQueued && !mod.isWorking && !downloadBusy)
                 {
                     LockButtons();
                     downloadBusy = true;
@@ -175,6 +178,12 @@ namespace Technic_Modpack_Creator
                     modListView.Items[i].SubItems[2].Text = mod.versionLocal;
                     modListView.Items[i].SubItems[3].Text = mod.versionLatest;
                     modListView.Items[i].SubItems[4].Text = mod.releaseDate;
+
+                    modListView.Items[i].SubItems[6].Text = mod.newFileName;
+                    modListView.Items[i].SubItems[7].Text = mod.website1;
+                    modListView.Items[i].SubItems[8].Text = mod.website2;
+                    modListView.Items[i].SubItems[9].Text = mod.website3;
+                    modListView.Items[i].SubItems[10].Text = mod.website4;
                 }
             }
 
@@ -220,6 +229,11 @@ namespace Technic_Modpack_Creator
                 lvi.SubItems.Add(mod.versionLatest);
                 lvi.SubItems.Add(mod.releaseDate);
                 lvi.SubItems.Add(mod.updateState);
+                lvi.SubItems.Add(mod.newFileName);
+                lvi.SubItems.Add(mod.website1);
+                lvi.SubItems.Add(mod.website2);
+                lvi.SubItems.Add(mod.website3);
+                lvi.SubItems.Add(mod.website4);
 
                 lvi.Checked = !mod.disabled;
                 modListView.Items.Add(lvi);
@@ -324,6 +338,12 @@ namespace Technic_Modpack_Creator
             Process.Start(selectedMod.website);
         }
 
+        private void googleButton_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://www.google.com/?gws_rd=ssl#q=" + selectedMod.modFilename.Replace(" ","") + "+minecraft");
+            Process.Start("https://www.google.com/?gws_rd=ssl#q=" + MiscFunctions.CleanString(selectedMod.modFilename) + "+minecraft");
+        }
+
         private void findSiteButton_Click(object sender, EventArgs e)
         {
             foreach (ModInfo mod in modList)
@@ -374,6 +394,25 @@ namespace Technic_Modpack_Creator
             modList[e.Item.Index].disabled = !e.Item.Checked;
             modList[e.Item.Index].SetFileNames();
             e.Item.SubItems[0].Text = modList[e.Item.Index].modFilename;
+        }
+
+        private void loadDataButton_Click(object sender, EventArgs e)
+        {
+            foreach (ModInfo mod in modList)
+            {
+                mod.website = uriDatabase.GetSuperiorSite(mod.modFilename, mod.website);
+                mod.UpdateModValues();
+            }
+            UpdateModList();
+        }
+
+        private void writeDataButton_Click(object sender, EventArgs e)
+        {
+            foreach (ModInfo mod in modList)
+            {
+                uriDatabase.ForceSetSite(mod.modFilename, mod.website);
+            }
+            uriDatabase.SaveDatabases();
         }
     }
 }

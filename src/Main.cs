@@ -32,6 +32,14 @@ namespace Technic_Modpack_Creator
         private int testModeA = 1;
         private int testModeB = 1;
 
+        public string mcVersion
+        {
+            get
+            {
+                return minecraftVersionBox.Text;
+            }
+        }
+
         public Main()
         {
             InitializeComponent();
