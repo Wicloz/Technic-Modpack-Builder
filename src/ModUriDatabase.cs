@@ -10,8 +10,11 @@ namespace Technic_Modpack_Creator
     class ModUriDatabase
     {
         private string cd = Directory.GetCurrentDirectory();
+
         private string userDatabaseFile = Directory.GetCurrentDirectory() + "\\settings\\userdatabase.dat";
         private Dictionary<string, string> userDatabase = new Dictionary<string, string>();
+        private string globalDatabaseFile = Directory.GetCurrentDirectory() + "\\settings\\globaldatabase.dat";
+        private Dictionary<string, string> globalDatabase = new Dictionary<string, string>();
 
         public void LoadDatabases()
         {
@@ -19,10 +22,11 @@ namespace Technic_Modpack_Creator
             {
                 userDatabase = SaveLoad.LoadFileBf<Dictionary<string, string>>(userDatabaseFile);
             }
-            else
+            if (File.Exists(globalDatabaseFile))
             {
-                SaveDatabases();
+                globalDatabase = SaveLoad.LoadFileBf<Dictionary<string, string>>(globalDatabaseFile);
             }
+            SaveDatabases();
         }
 
         public void SaveDatabases()
@@ -33,9 +37,13 @@ namespace Technic_Modpack_Creator
         public string GetSite(string modName)
         {
             string cleanName = MiscFunctions.CleanString(modName);
-            if (userDatabase.ContainsKey(cleanName))
+            if (userDatabase.ContainsKey(cleanName) && userDatabase[cleanName] != "NONE")
             {
                 return userDatabase[cleanName];
+            }
+            else if (globalDatabase.ContainsKey(cleanName) && globalDatabase[cleanName] != "NONE")
+            {
+                return globalDatabase[cleanName];
             }
             else
             {
@@ -53,6 +61,14 @@ namespace Technic_Modpack_Creator
             else
             {
                 return dataSite;
+            }
+        }
+
+        public void SetSite(string modName, string uri)
+        {
+            if (uri != "NONE")
+            {
+                ForceSetSite(modName, uri);
             }
         }
 
