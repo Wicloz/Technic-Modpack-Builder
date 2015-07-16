@@ -60,6 +60,8 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.findSelectedButton = new System.Windows.Forms.Button();
+            this.checkSelectedButton = new System.Windows.Forms.Button();
             this.modInfoBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -146,6 +148,8 @@
             // 
             this.modInfoBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.modInfoBox.Controls.Add(this.checkSelectedButton);
+            this.modInfoBox.Controls.Add(this.findSelectedButton);
             this.modInfoBox.Controls.Add(this.googleButton);
             this.modInfoBox.Controls.Add(this.canUpdateBox);
             this.modInfoBox.Controls.Add(this.updateSelectedButton);
@@ -193,7 +197,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.updateSelectedButton.Location = new System.Drawing.Point(9, 97);
             this.updateSelectedButton.Name = "updateSelectedButton";
-            this.updateSelectedButton.Size = new System.Drawing.Size(998, 34);
+            this.updateSelectedButton.Size = new System.Drawing.Size(690, 34);
             this.updateSelectedButton.TabIndex = 8;
             this.updateSelectedButton.Text = "Update Mod";
             this.updateSelectedButton.UseVisualStyleBackColor = true;
@@ -332,7 +336,7 @@
             this.loadDataButton.Name = "loadDataButton";
             this.loadDataButton.Size = new System.Drawing.Size(226, 44);
             this.loadDataButton.TabIndex = 6;
-            this.loadDataButton.Text = "Load Missing Sites from Database";
+            this.loadDataButton.Text = "Force Load Missing Sites from Database";
             this.loadDataButton.UseVisualStyleBackColor = true;
             this.loadDataButton.Click += new System.EventHandler(this.loadDataButton_Click);
             // 
@@ -363,6 +367,28 @@
             // 
             this.columnHeader4.Width = 112;
             // 
+            // findSelectedButton
+            // 
+            this.findSelectedButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.findSelectedButton.Location = new System.Drawing.Point(859, 97);
+            this.findSelectedButton.Name = "findSelectedButton";
+            this.findSelectedButton.Size = new System.Drawing.Size(148, 34);
+            this.findSelectedButton.TabIndex = 11;
+            this.findSelectedButton.Text = "Find Website";
+            this.findSelectedButton.UseVisualStyleBackColor = true;
+            this.findSelectedButton.Click += new System.EventHandler(this.findSelectedButton_Click);
+            // 
+            // checkSelectedButton
+            // 
+            this.checkSelectedButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkSelectedButton.Location = new System.Drawing.Point(705, 97);
+            this.checkSelectedButton.Name = "checkSelectedButton";
+            this.checkSelectedButton.Size = new System.Drawing.Size(148, 34);
+            this.checkSelectedButton.TabIndex = 12;
+            this.checkSelectedButton.Text = "Check For Update";
+            this.checkSelectedButton.UseVisualStyleBackColor = true;
+            this.checkSelectedButton.Click += new System.EventHandler(this.checkSelectedButton_Click);
+            // 
             // ModManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -379,6 +405,7 @@
             this.Text = "Mod Manager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ModManager_FormClosing);
             this.Load += new System.EventHandler(this.ModManager_Load);
+            this.Shown += new System.EventHandler(this.ModManager_Shown);
             this.modInfoBox.ResumeLayout(false);
             this.modInfoBox.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -419,5 +446,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.Button checkSelectedButton;
+        private System.Windows.Forms.Button findSelectedButton;
     }
 }

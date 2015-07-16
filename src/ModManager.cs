@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Net;
 
 namespace Technic_Modpack_Creator
 {
@@ -41,6 +42,13 @@ namespace Technic_Modpack_Creator
             UpdateModList();
         }
 
+        private void ModManager_Shown(object sender, EventArgs e)
+        {
+            // Download uri database
+            WebClient client = new WebClient();
+            client.DownloadFileAsync(new Uri("https://dl.dropboxusercontent.com/u/46484032/TMC/uridatabase.dat"), cd + "\\settings\\globaldatabase.dat");
+        }
+
         private void ModManager_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveModList();
@@ -59,6 +67,10 @@ namespace Technic_Modpack_Creator
         private void SaveModList()
         {
             SaveLoad.SaveFileBf(modList, cd + "\\settings\\modlist.dat");
+            foreach (ModInfo mod in modList)
+            {
+                uriDatabase.SetSite(mod.modFilename, mod.website);
+            }
         }
 
         private void UpdateModList()
@@ -116,13 +128,17 @@ namespace Technic_Modpack_Creator
                 }
                 else
                 {
+                    if (modList[i].uriState == "")
+                    {
+                        modList[i].website = uriDatabase.GetSuperiorSite(modList[i].modFilename, modList[i].website);
+                    }
                     modList[i].UpdateModValues();
                 }
             }
 
             modList.Sort();
-            UpdateListView();
             SaveModList();
+            UpdateListView();
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -260,6 +276,7 @@ namespace Technic_Modpack_Creator
             {
                 modListView.SelectedIndices.Add(index);
                 SelectItem(index);
+                modListView.Select();
             }
             else
             {
@@ -348,9 +365,8 @@ namespace Technic_Modpack_Creator
         {
             foreach (ModInfo mod in modList)
             {
-                if (mod.siteMode == "NONE")
+                if (mod.uriState == "")
                 {
-                    //LockButtons();
                     mod.findQueued = true;
                 }
             }
@@ -360,11 +376,7 @@ namespace Technic_Modpack_Creator
         {
             foreach (ModInfo mod in modList)
             {
-                if (mod.siteMode != "NONE")
-                {
-                    //LockButtons();
-                    mod.checkQueued = true;
-                }
+                mod.checkQueued = true;
             }
         }
 
@@ -374,7 +386,6 @@ namespace Technic_Modpack_Creator
             {
                 if (mod.canUpdate)
                 {
-                    //LockButtons();
                     mod.downloadQueued = true;
                 }
             }
@@ -384,9 +395,19 @@ namespace Technic_Modpack_Creator
         {
             if (selectedMod.canUpdate)
             {
-                //LockButtons();
                 selectedMod.downloadQueued = true;
+                selectedMod.downloadBusy = false;
             }
+        }
+
+        private void findSelectedButton_Click(object sender, EventArgs e)
+        {
+            selectedMod.findQueued = true;
+        }
+
+        private void checkSelectedButton_Click(object sender, EventArgs e)
+        {
+            selectedMod.checkQueued = true;
         }
 
         private void modListView_ItemChecked(object sender, ItemCheckedEventArgs e)
