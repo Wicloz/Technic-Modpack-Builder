@@ -14,7 +14,13 @@ namespace Technic_Modpack_Creator
     class ModInfo : System.IComparable<ModInfo>
     {
         private string cd = Directory.GetCurrentDirectory();
-        private string downloadFolder;
+        private string downloadFolder
+        {
+            get
+            {
+                return cd + "\\downloads\\" + MiscFunctions.CleanString(modFilename);
+            }
+        }
         private string curseIdentifier = "minecraft.curseforge.com/mc-mods/";
         private string forumIdentifier = "minecraftforum.net/forums/mapping-and-modding/minecraft-mods/";
         private string githubIdentifier = "github.com";
@@ -158,7 +164,12 @@ namespace Technic_Modpack_Creator
                 }
                 else
                 {
-                    Directory.Delete(downloadFolder, true);
+                    try
+                    {
+                        Directory.Delete(downloadFolder, true);
+                    }
+                    catch
+                    { }
                 }
             }
         }
@@ -176,9 +187,6 @@ namespace Technic_Modpack_Creator
             //Manage local version
             versionLocal = MiscFunctions.RemoveLetters(modFilename);
 
-            //Initialise variables
-            downloadFolder = cd + "\\downloads\\" + MiscFunctions.CleanString(modFilename);
-
             //Determine site mode
             if (website == "")
             {
@@ -188,14 +196,17 @@ namespace Technic_Modpack_Creator
             if (website.Contains(curseIdentifier))
             {
                 siteMode = "curse";
+                website = ParseCurseUri(website);
             }
             else if (website.Contains(forumIdentifier))
             {
                 siteMode = "forum";
+                website = ParseForumUri(website);
             }
             else if (website.Contains(githubIdentifier))
             {
                 siteMode = "github";
+                website = ParseGithubUri(website);
             }
             else
             {
@@ -213,7 +224,7 @@ namespace Technic_Modpack_Creator
                 endCharList = new char[] { '"' };
                 string appendage = MiscFunctions.ExtractSection(versionLatestRaw, endCharList, startCharList);
 
-                dlSite = website + appendage;
+                dlSite = website + "/" + appendage;
             }
 
             else if (siteMode == "github")
@@ -276,23 +287,23 @@ namespace Technic_Modpack_Creator
                     client1.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanModName(modFilename)));
                     break;
                 case 2:
-                    website1 = website.Replace(forumIdentifier, "").Replace(curseIdentifier, "").Replace("http://", "").Replace("www.", "");
+                    website1 = website;
                     website = "NONE"; //debug
                     client3.DownloadStringAsync(new Uri("http://www.google.com/search?sourceid=navclient&btnI=I&q=" + modFilename.Replace(" ", "") + "+minecraft"));
                     break;
                 case 3:
-                    website2 = website.Replace(forumIdentifier, "").Replace(curseIdentifier, "").Replace("http://", "").Replace("www.", "");
+                    website2 = website;
                     website = "NONE"; //debug
                     client4.DownloadStringAsync(new Uri("https://search.yahoo.com/search?p=" + modFilename.Replace(" ", "") + "+minecraft"));
                     break;
                 case 4:
-                    website3 = website.Replace(forumIdentifier, "").Replace(curseIdentifier, "").Replace("http://", "").Replace("www.", "");
+                    website3 = website;
                     website = "NONE"; //debug
                     client4.DownloadStringAsync(new Uri("https://search.yahoo.com/search?p=" + MiscFunctions.CleanString(modFilename) + "+minecraft"));
                     break;
 
                 default:
-                    website4 = website.Replace(forumIdentifier, "").Replace(curseIdentifier, "").Replace("http://", "").Replace("www.", "");
+                    website4 = website;
                     website = "NONE"; //debug
                     if (website1 != "NONE")
                     {
@@ -310,6 +321,10 @@ namespace Technic_Modpack_Creator
                     {
                         website = website4;
                     }
+                    website1 = website1.Replace(forumIdentifier, "").Replace(curseIdentifier, "").Replace("http://", "").Replace("www.", "");
+                    website2 = website2.Replace(forumIdentifier, "").Replace(curseIdentifier, "").Replace("http://", "").Replace("www.", "");
+                    website3 = website3.Replace(forumIdentifier, "").Replace(curseIdentifier, "").Replace("http://", "").Replace("www.", "");
+                    website4 = website4.Replace(forumIdentifier, "").Replace(curseIdentifier, "").Replace("http://", "").Replace("www.", "");
 
                     //client2.DownloadStringAsync(new Uri("http://www.google.com/search?&sourceid=navclient&btnI=I&q=" + MiscFunctions.CleanString(modFilename) + "+curseforge"));
                     //client3.DownloadStringAsync(new Uri("http://www.google.com/search?sourceid=navclient&btnI=I&q=" + MiscFunctions.CleanString(modFilename) + "+minecraft"));
@@ -565,52 +580,46 @@ namespace Technic_Modpack_Creator
         {
             if (!uri.Contains(curseIdentifier) || uri == "http://minecraft.curseforge.com/mc-mods/minecraft")
             {
-                return "NONE";
+                uri = "NONE";
             }
             else if (uri.EndsWith("/files"))
             {
-                return uri.Replace("/files", "");
+                uri = uri.Replace("/files", "");
             }
             else if (uri.Contains("/files/"))
             {
                 char[] startCharList = new char[] { 'f', 'i', 'l', 'e', 's', '/' };
                 char[] endCharList = new char[] { };
                 string garbage = "/files/" + MiscFunctions.ExtractSection(uri, endCharList, startCharList);
-                return uri.Replace(garbage, "");
+                uri = uri.Replace(garbage, "");
             }
-            else
-            {
-                return uri;
-            }
+
+            return uri;
         }
 
         private string ParseForumUri(string uri)
         {
             if (!uri.Contains(forumIdentifier) || uri == "http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods")
             {
-                return "NONE";
+                uri = "NONE";
             }
             else if (uri.Contains("?page="))
             {
                 char[] endCharList = new char[] { '?' };
-                return MiscFunctions.ExtractSection(uri, endCharList);
+                uri = MiscFunctions.ExtractSection(uri, endCharList);
             }
-            else
-            {
-                return uri;
-            }
+
+            return uri;
         }
 
         private string ParseGithubUri(string uri)
         {
             if (!uri.Contains(githubIdentifier))
             {
-                return "NONE";
+                uri = "NONE";
             }
-            else
-            {
-                return uri;
-            }
+
+            return uri;
         }
 
         public void CheckForUpdate()
@@ -627,6 +636,9 @@ namespace Technic_Modpack_Creator
             else
             {
                 checkQueued = false;
+                versionLatest = "N/A";
+                releaseDate = "N/A";
+                newFileName = "";
             }
         }
 
@@ -650,7 +662,7 @@ namespace Technic_Modpack_Creator
                         {
                             while (!newVersion.Contains("<h4 class=\"e-sidebar-subheader overflow-tip\">Minecraft"))
                             {
-                                newVersion = sr.ReadLine().Trim();
+                                newVersion = sr.ReadLine();
                                 if (newVersion == null)
                                 {
                                     versionLatest = "MC version not found";
@@ -660,6 +672,7 @@ namespace Technic_Modpack_Creator
                                     updateList = true;
                                     return;
                                 }
+                                newVersion = newVersion.Trim();
                             }
 
                             char[] startCharList = new char[] { '>', 'm', 'i', 'n', 'e', 'c', 'r', 'a', 'f', 't' };
@@ -684,7 +697,7 @@ namespace Technic_Modpack_Creator
 
                                 startCharList = new char[] { '>' };
                                 endCharList = new char[] { '<' };
-                                newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList).Replace(" ", "").ToLower();
+                                newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList).Replace(" ", "").ToLower().Replace("&#x27;", "").Replace("+", "");
 
                                 string dateLine = sr.ReadLine().Trim();
                                 startCharList = new char[] { '"', '>' };
@@ -755,9 +768,9 @@ namespace Technic_Modpack_Creator
 
         public void UpdateMod()
         {
-            if (Directory.GetFiles(downloadFolder).Length > 0)
+            if (Directory.Exists(downloadFolder) && Directory.GetFiles(downloadFolder).Length > 0)
             {
-                newFileName = Directory.GetFiles(downloadFolder)[0];
+                newFileName = Path.GetFileName(Directory.GetFiles(downloadFolder)[0]);
                 if (newFileName.EndsWith(".zip") || newFileName.EndsWith(".jar"))
                 {
                     downloadBusy = true;
@@ -795,13 +808,17 @@ namespace Technic_Modpack_Creator
 
                 if (File.Exists(downloadedFilePath))
                 {
-                    ZipFile.ExtractToDirectory(downloadedFilePath, downloadFolder + "\\extract");
+                    //ZipFile.ExtractToDirectory(downloadedFilePath, downloadFolder + "\\extract");
                     progress = 100;
                     MoveDownloadedMod();
                 }
             }
             catch
-            { }
+            {
+                progress = 0;
+                downloadQueued = false;
+                downloadBusy = false;
+            }
         }
 
         private void MoveDownloadedMod()
@@ -813,7 +830,6 @@ namespace Technic_Modpack_Creator
 
             string downloadedFilePath = downloadFolder + "\\" + newFileName;
             File.Move(downloadedFilePath, newModLocation);
-            modFilename = newFileName.ToLower();
 
             try
             {
@@ -821,6 +837,8 @@ namespace Technic_Modpack_Creator
             }
             catch
             { }
+
+            modFilename = newFileName.ToLower();
 
             versionLocalRaw = versionLatestRaw;
             UpdateModValues();
