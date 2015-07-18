@@ -49,6 +49,7 @@
             this.openThisFolder = new System.Windows.Forms.Button();
             this.includeOptionsBox = new System.Windows.Forms.CheckBox();
             this.buttonStartLauncher = new System.Windows.Forms.Button();
+            this.includeDisabledBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // testButtonClient
@@ -243,11 +244,22 @@
             this.buttonStartLauncher.UseVisualStyleBackColor = true;
             this.buttonStartLauncher.Click += new System.EventHandler(this.buttonStartLauncher_Click);
             // 
+            // includeDisabledBox
+            // 
+            this.includeDisabledBox.AutoSize = true;
+            this.includeDisabledBox.Location = new System.Drawing.Point(137, 281);
+            this.includeDisabledBox.Name = "includeDisabledBox";
+            this.includeDisabledBox.Size = new System.Drawing.Size(134, 17);
+            this.includeDisabledBox.TabIndex = 22;
+            this.includeDisabledBox.Text = "Include Disabled Mods";
+            this.includeDisabledBox.UseVisualStyleBackColor = true;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(696, 311);
+            this.Controls.Add(this.includeDisabledBox);
             this.Controls.Add(this.buttonStartLauncher);
             this.Controls.Add(this.includeOptionsBox);
             this.Controls.Add(this.openThisFolder);
@@ -302,6 +314,7 @@
         private System.Windows.Forms.Button openThisFolder;
         public System.Windows.Forms.CheckBox includeOptionsBox;
         private System.Windows.Forms.Button buttonStartLauncher;
+        public System.Windows.Forms.CheckBox includeDisabledBox;
     }
 }
 
