@@ -71,7 +71,7 @@ namespace Technic_Modpack_Creator
                 File.Delete(testFolder + "\\bin\\modpack.jar");
             }
 
-            //Copy files
+            //Copy modpack directory
             foreach (string file in Directory.GetFiles(cd + "\\modpack", "*.*", SearchOption.AllDirectories))
             {
                 if (file != cd + "\\modpack\\bin\\modpack.jar")
