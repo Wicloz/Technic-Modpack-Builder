@@ -163,7 +163,7 @@ namespace Technic_Modpack_Creator
                 else if (mod.checkQueued && !mod.isWorking)
                 {
                     LockButtons();
-                    mod.CheckForUpdate();
+                    mod.CheckForUpdate(Main.acces.mcVersion);
                 }
                 else if (mod.downloadQueued && !mod.isWorking && !downloadBusy)
                 {

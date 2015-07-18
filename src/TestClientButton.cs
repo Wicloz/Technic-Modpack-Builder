@@ -30,7 +30,6 @@ namespace Technic_Modpack_Creator
                                         testFolder + "\\hats",
                                         testFolder + "\\mods",
                                         testFolder + "\\scripts",
-                                        testFolder + "\\journeymap",
                                         testFolder + "\\betterrecords"
                                      };
 
@@ -98,6 +97,12 @@ namespace Technic_Modpack_Creator
                 return false;
             }
 
+            //Copy potionidhelper
+            foreach (string file in Directory.GetFiles(cd + "\\plugins\\potionidhelper"))
+            {
+                File.Copy(file, testFolder + "\\mods\\" + Path.GetFileName(file), true);
+            }
+
             //Copy idfixminus.jar
             if (File.Exists(cd + "\\plugins\\idfixer\\idfixminus.jar"))
             {
@@ -148,6 +153,18 @@ namespace Technic_Modpack_Creator
 
             //Copy all configs
             foreach (string file in Directory.GetFiles(testFolder, "*.cfg", SearchOption.AllDirectories))
+            {
+                if (!file.Contains(testFolder + "\\asm") && !file.Contains(testFolder + "\\saves") && !file.Contains(testFolder + "\\crash-reports") && !file.Contains(testFolder + "\\backups") && !file.Contains(testFolder + "\\compendiumunlocks"))
+                {
+                    string newFile = file.Replace(testFolder, cd + "\\modpack");
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+                    File.Delete(newFile);
+                    File.Copy(file, newFile, true);
+                }
+            }
+
+            foreach (string file in Directory.GetFiles(testFolder, "*.config", SearchOption.AllDirectories))
             {
                 if (!file.Contains(testFolder + "\\asm") && !file.Contains(testFolder + "\\saves") && !file.Contains(testFolder + "\\crash-reports") && !file.Contains(testFolder + "\\backups") && !file.Contains(testFolder + "\\compendiumunlocks"))
                 {

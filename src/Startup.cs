@@ -21,6 +21,7 @@ namespace Technic_Modpack_Creator
         private bool finished = false;
         private bool taskDone = true;
         private int pbValue = 0;
+        private bool coreExists = false;
 
         private string[] labelText = {
                                         "Creating Directory's ...",
@@ -31,13 +32,16 @@ namespace Technic_Modpack_Creator
                                         "Downloading Server Files ...",
                                         "Downloading Client Files ...",
                                         "Downloading Client Files ...",
-                                        "Downloading Client Files ..."
+                                        "Downloading Potion ID Helper ...",
+                                        "Downloading Potion ID Helper ..."
                                      };
 
         private ProgressBarStyle[] pbStyle = {
                                                 ProgressBarStyle.Marquee,
                                                 ProgressBarStyle.Marquee,
                                                 ProgressBarStyle.Marquee,
+                                                ProgressBarStyle.Continuous,
+                                                ProgressBarStyle.Continuous,
                                                 ProgressBarStyle.Continuous,
                                                 ProgressBarStyle.Continuous,
                                                 ProgressBarStyle.Continuous,
@@ -103,7 +107,7 @@ namespace Technic_Modpack_Creator
                 return;
             }
 
-            else if (stuffIndex <= 8)
+            else if (stuffIndex <= 10)
             {
                 stuff = new Thread(DownloadFile);
                 stuff.Start();
@@ -199,6 +203,26 @@ namespace Technic_Modpack_Creator
             if (Directory.Exists(cd + "\\downloads") && Directory.GetDirectories(cd + "\\downloads").Length == 0)
             {
                 Directory.Delete(cd + "\\downloads", true);
+            }
+
+            foreach (string file in Directory.GetFiles(cd + "\\modpack\\mods"))
+            {
+                if (file.Contains("brandonscore"))
+                {
+                    coreExists = true;
+                    break;
+                }
+            }
+
+            if (coreExists)
+            {
+                foreach (string file in Directory.GetFiles(cd + "\\plugins\\potionidhelper"))
+                {
+                    if (file.Contains("brandonscore"))
+                    {
+                        File.Delete(file);
+                    }
+                }
             }
 
             taskDone = true;
@@ -305,6 +329,68 @@ namespace Technic_Modpack_Creator
                 {
                     WebClient client = new WebClient();
                     client.DownloadFileAsync(new Uri("https://s3.amazonaws.com/Minecraft.Download/versions/" + version + "/" + version + ".json"), cd + "\\plugins\\client_template\\bin\\" + version + ".json");
+                    client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                }
+                else
+                {
+                    taskDone = true;
+                }
+
+                return;
+            }
+
+            else if (stuffIndex == 9)
+            {
+                if (version != "" && Directory.GetFiles(cd + "\\plugins\\potionidhelper").Length == 0)
+                {
+                    ModInfo pih = new ModInfo("potionidhelper.jar");
+                    pih.website = "http://minecraft.curseforge.com/mc-mods/231384-potion-id-helper";
+                    pih.UpdateModValues();
+                    pih.CheckForUpdate(version);
+
+                    while (pih.checkBusy)
+                    { }
+
+                    WebClient client = new WebClient();
+                    client.DownloadFileAsync(new Uri(pih.dlSite), cd + "\\plugins\\potionidhelper\\" + pih.newFileName);
+                    client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                }
+                else
+                {
+                    taskDone = true;
+                }
+
+                return;
+            }
+
+            else if (stuffIndex == 10)
+            {
+                if (!coreExists)
+                {
+                    foreach (string file in Directory.GetFiles(cd + "\\plugins\\potionidhelper"))
+                    {
+                        if (file.Contains("brandonscore"))
+                        {
+                            coreExists = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (version != "" && !coreExists)
+                {
+                    ModInfo bc = new ModInfo("brandonscore.jar");
+                    bc.website = "http://minecraft.curseforge.com/mc-mods/231382-brandons-core";
+                    bc.UpdateModValues();
+                    bc.CheckForUpdate(version);
+
+                    while (bc.checkBusy)
+                    { }
+
+                    WebClient client = new WebClient();
+                    client.DownloadFileAsync(new Uri(bc.dlSite), cd + "\\plugins\\potionidhelper\\" + bc.newFileName);
                     client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
                     client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
                 }

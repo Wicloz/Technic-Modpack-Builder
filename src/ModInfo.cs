@@ -24,6 +24,7 @@ namespace Technic_Modpack_Creator
         private string curseIdentifier = "minecraft.curseforge.com/mc-mods/";
         private string forumIdentifier = "minecraftforum.net/forums/mapping-and-modding/minecraft-mods/";
         private string githubIdentifier = "github.com";
+        private string mcVersion = "";
 
         public string modFilename = "";
         public bool disabled = false;
@@ -622,8 +623,10 @@ namespace Technic_Modpack_Creator
             return uri;
         }
 
-        public void CheckForUpdate()
+        public void CheckForUpdate(string mcVersion)
         {
+            this.mcVersion = mcVersion;
+
             if (siteMode != "NONE")
             {
                 checkBusy = true;
@@ -683,7 +686,7 @@ namespace Technic_Modpack_Creator
                             try
                             {
                                 char[] delim = new char[] { '.' };
-                                thisVersion = Main.acces.mcVersion.Split(delim)[0] + "." + Main.acces.mcVersion.Split(delim)[1];
+                                thisVersion = mcVersion.Split(delim)[0] + "." + mcVersion.Split(delim)[1];
                             }
                             catch
                             { }
