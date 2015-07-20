@@ -174,24 +174,17 @@ namespace Technic_Modpack_Creator
 
         public int order;
         public string version;
-        public List<string> fileList;
-        public List<string> modList;
-        public List<string> changelog;
+        public List<string> fileList = new List<string>();
+        public List<string> modList = new List<string>();
+        public List<string> changelog = new List<string>();
 
         public FileList()
-        {
-            fileList = new List<string>();
-            modList = new List<string>();
-            changelog = new List<string>();
-        }
+        { }
 
         public FileList(int order, string version)
         {
             this.order = order;
             this.version = version;
-            fileList = new List<string>();
-            modList = new List<string>();
-            changelog = new List<string>();
         }
 
         public void CreateFileList()
@@ -210,7 +203,7 @@ namespace Technic_Modpack_Creator
 
             foreach (string file in this.fileList)
             {
-                if (file.Contains("mods\\") || file.Contains("coremods\\"))
+                if ((file.Contains("mods\\") || file.Contains("coremods\\") || file.Contains("Flan\\")) && Path.GetExtension(file) != ".disabled")
                 {
                     modList.Add(file.Replace("mods\\", "").Replace("coremods\\", ""));
                 }

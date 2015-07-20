@@ -680,7 +680,7 @@ namespace Technic_Modpack_Creator
 
                             char[] startCharList = new char[] { '>', 'm', 'i', 'n', 'e', 'c', 'r', 'a', 'f', 't' };
                             char[] endCharList = new char[] { '<' };
-                            string mcVersion = MiscFunctions.ExtractSection(newVersion.ToLower(), endCharList, startCharList).Trim();
+                            string siteVersion = MiscFunctions.ExtractSection(newVersion.ToLower(), endCharList, startCharList).Trim();
 
                             string thisVersion = "";
                             try
@@ -691,7 +691,7 @@ namespace Technic_Modpack_Creator
                             catch
                             { }
 
-                            if (mcVersion == thisVersion)
+                            if (siteVersion == thisVersion)
                             {
                                 while (!newVersion.Contains("<a class=\"overflow-tip\" href=\"/mc-mods/"))
                                 {
@@ -701,6 +701,15 @@ namespace Technic_Modpack_Creator
                                 startCharList = new char[] { '>' };
                                 endCharList = new char[] { '<' };
                                 newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList).Replace(" ", "").ToLower().Replace("&#x27;", "").Replace("+", "");
+
+                                string[] modNames = new string[] { "reliquary", "carpentersblocks", "hardcoreenderexpansion" };
+                                foreach (string mod in modNames)
+                                {
+                                    if (MiscFunctions.CleanString(website).Contains(mod) && !MiscFunctions.CleanString(newFile).Contains(mod))
+                                    {
+                                        newFile = mod + "-" + newFile;
+                                    }
+                                }
 
                                 string dateLine = sr.ReadLine().Trim();
                                 startCharList = new char[] { '"', '>' };
@@ -752,6 +761,10 @@ namespace Technic_Modpack_Creator
                     if (versionLatestRaw != versionLocalRaw)
                     {
                         canUpdate = true;
+                    }
+                    else
+                    {
+                        canUpdate = false;
                     }
                 }
 
