@@ -18,7 +18,14 @@ namespace Technic_Modpack_Creator
         {
             get
             {
-                return cd + "\\downloads\\" + MiscFunctions.CleanString(modFilename);
+                return cd + "\\downloads\\" + MiscFunctions.CleanString(modFileName);
+            }
+        }
+        private string downloadedFile
+        {
+            get
+            {
+                return downloadFolder + "\\" + newFileName;
             }
         }
         private string curseIdentifier = "minecraft.curseforge.com/mc-mods/";
@@ -26,7 +33,7 @@ namespace Technic_Modpack_Creator
         private string githubIdentifier = "github.com";
         private string mcVersion = "";
 
-        public string modFilename = "";
+        public string modFileName = "";
         public bool disabled = false;
 
         public string versionLocalRaw = "";
@@ -180,13 +187,13 @@ namespace Technic_Modpack_Creator
 
         public ModInfo(string fileName)
         {
-            modFilename = fileName;
+            modFileName = fileName;
         }
 
         public void UpdateModValues()
         {
             //Manage local version
-            versionLocal = MiscFunctions.RemoveLetters(modFilename);
+            versionLocal = MiscFunctions.RemoveLetters(modFileName);
 
             //Determine site mode
             if (website == "")
@@ -247,18 +254,18 @@ namespace Technic_Modpack_Creator
             {
                 newFileName += ".disabled";
             }
-            if (disabled && !modFilename.Contains(".disabled"))
+            if (disabled && !modFileName.Contains(".disabled"))
             {
-                string modPath = cd + "\\modpack\\mods\\" + modFilename;
+                string modPath = cd + "\\modpack\\mods\\" + modFileName;
                 File.Move(modPath, modPath + ".disabled");
-                modFilename += ".disabled";
+                modFileName += ".disabled";
             }
 
             if (!disabled)
             {
                 newFileName = newFileName.Replace(".disabled", "");
-                modFilename = modFilename.Replace(".disabled", "");
-                string modPath = cd + "\\modpack\\mods\\" + modFilename;
+                modFileName = modFileName.Replace(".disabled", "");
+                string modPath = cd + "\\modpack\\mods\\" + modFileName;
 
                 if (File.Exists(modPath + ".disabled"))
                 {
@@ -285,22 +292,22 @@ namespace Technic_Modpack_Creator
             {
                 case 1:
                     website = "NONE"; //debug
-                    client1.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanModName(modFilename)));
+                    client1.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanModName(modFileName)));
                     break;
                 case 2:
                     website1 = website;
                     website = "NONE"; //debug
-                    client3.DownloadStringAsync(new Uri("http://www.google.com/search?sourceid=navclient&btnI=I&q=" + modFilename.Replace(" ", "") + "+minecraft"));
+                    client3.DownloadStringAsync(new Uri("http://www.google.com/search?sourceid=navclient&btnI=I&q=" + modFileName.Replace(" ", "") + "+minecraft"));
                     break;
                 case 3:
                     website2 = website;
                     website = "NONE"; //debug
-                    client4.DownloadStringAsync(new Uri("https://search.yahoo.com/search?p=" + modFilename.Replace(" ", "") + "+minecraft"));
+                    client4.DownloadStringAsync(new Uri("https://search.yahoo.com/search?p=" + modFileName.Replace(" ", "") + "+minecraft"));
                     break;
                 case 4:
                     website3 = website;
                     website = "NONE"; //debug
-                    client4.DownloadStringAsync(new Uri("https://search.yahoo.com/search?p=" + MiscFunctions.CleanString(modFilename) + "+minecraft"));
+                    client4.DownloadStringAsync(new Uri("https://search.yahoo.com/search?p=" + MiscFunctions.CleanString(modFileName) + "+minecraft"));
                     break;
 
                 default:
@@ -368,7 +375,7 @@ namespace Technic_Modpack_Creator
                         char[] endCharList = new char[] { '<' };
                         string foundModname = MiscFunctions.ExtractSection(result, endCharList, startCharList);
 
-                        if (MiscFunctions.CleanString(foundModname) == MiscFunctions.CleanString(modFilename))
+                        if (MiscFunctions.CleanString(foundModname) == MiscFunctions.CleanString(modFileName))
                         {
                             startCharList = new char[] { '=', '"' };
                             endCharList = new char[] { '"' };
@@ -424,7 +431,7 @@ namespace Technic_Modpack_Creator
                         endCharList = new char[] { '<' };
                         string foundModname = MiscFunctions.ExtractSection(currentline, endCharList, startCharList);
 
-                        if (!MiscFunctions.PartialMatch(modFilename, foundModname))
+                        if (!MiscFunctions.PartialMatch(modFileName, foundModname))
                         {
                             website = "No Patial Match: "; //debug
                         }
@@ -556,11 +563,11 @@ namespace Technic_Modpack_Creator
                     char[] endCharList = new char[] { };
                     string foundModname = MiscFunctions.ExtractSection(results[i], endCharList, startCharList);
 
-                    if (curseLink == "NONE" && results[i].Contains(curseIdentifier) && MiscFunctions.PartialMatch(modFilename, foundModname))
+                    if (curseLink == "NONE" && results[i].Contains(curseIdentifier) && MiscFunctions.PartialMatch(modFileName, foundModname))
                     {
                         curseLink = ParseCurseUri(results[i]);
                     }
-                    if (forumLink == "NONE" && results[i].Contains(forumIdentifier) && MiscFunctions.PartialMatch(modFilename, foundModname))
+                    if (forumLink == "NONE" && results[i].Contains(forumIdentifier) && MiscFunctions.PartialMatch(modFileName, foundModname))
                     {
                         forumLink = ParseForumUri(results[i]);
                     }
@@ -801,13 +808,17 @@ namespace Technic_Modpack_Creator
             else if (uriState == "Automatic")
             {
                 downloadBusy = true;
+                if (Directory.Exists(downloadFolder))
+                {
+                    Directory.Delete(downloadFolder, true);
+                }
                 Directory.CreateDirectory(downloadFolder);
 
                 WebClient client = new WebClient();
                 client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
                 client.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(modDownloadCompleted);
                 progress = 10;
-                client.DownloadFileAsync(new Uri(dlSite), downloadFolder + "\\" + newFileName);
+                client.DownloadFileAsync(new Uri(dlSite), downloadedFile);
             }
 
             else
@@ -820,17 +831,21 @@ namespace Technic_Modpack_Creator
         {
             try
             {
-                string downloadedFilePath = downloadFolder + "\\" + newFileName;
-
-                if (File.Exists(downloadedFilePath))
+                if (File.Exists(downloadedFile))
                 {
-                    //ZipFile.ExtractToDirectory(downloadedFilePath, downloadFolder + "\\extract");
+                    //ZipFile.ExtractToDirectory(downloadedFile, downloadFolder + "\\extract");
                     progress = 100;
                     MoveDownloadedMod();
                 }
             }
             catch
             {
+                if (Directory.Exists(downloadFolder))
+                {
+                    Directory.Delete(downloadFolder, true);
+                }
+                Directory.CreateDirectory(downloadFolder);
+
                 progress = 0;
                 downloadQueued = false;
                 downloadBusy = false;
@@ -840,23 +855,15 @@ namespace Technic_Modpack_Creator
         private void MoveDownloadedMod()
         {
             string newModLocation = cd + "\\modpack\\mods\\" + newFileName;
-            string oldModLocation = cd + "\\modpack\\mods\\" + modFilename;
+            string oldModLocation = cd + "\\modpack\\mods\\" + modFileName;
+
             File.Delete(newModLocation);
             File.Delete(oldModLocation);
+            File.Move(downloadedFile, newModLocation);
 
-            string downloadedFilePath = downloadFolder + "\\" + newFileName;
-            File.Move(downloadedFilePath, newModLocation);
-
-            try
-            {
-                Directory.Delete(downloadFolder, true);
-            }
-            catch
-            { }
-
-            modFilename = newFileName.ToLower();
-
+            modFileName = newFileName.ToLower();
             versionLocalRaw = versionLatestRaw;
+
             UpdateModValues();
             progress = 0;
             downloadQueued = false;
@@ -877,8 +884,8 @@ namespace Technic_Modpack_Creator
                 return 1;
             }
 
-            char[] charArray1 = (this.modFilename).ToCharArray();
-            char[] charArray2 = (other.modFilename).ToCharArray();
+            char[] charArray1 = (this.modFileName).ToCharArray();
+            char[] charArray2 = (other.modFileName).ToCharArray();
 
             if (charArray1.Length == 0 || charArray2.Length == 0)
             {

@@ -69,7 +69,7 @@ namespace Technic_Modpack_Creator
             SaveLoad.SaveFileBf(modList, cd + "\\settings\\modlist.dat");
             foreach (ModInfo mod in modList)
             {
-                uriDatabase.SetSite(mod.modFilename, mod.website);
+                uriDatabase.SetSite(mod.modFileName, mod.website);
             }
         }
 
@@ -96,7 +96,7 @@ namespace Technic_Modpack_Creator
                 bool exists = false;
                 foreach (ModInfo info in modList)
                 {
-                    if (file == info.modFilename)
+                    if (file == info.modFileName)
                     {
                         exists = true;
                         break;
@@ -114,7 +114,7 @@ namespace Technic_Modpack_Creator
                 bool exists = false;
                 foreach (string file in fileList)
                 {
-                    if (modList[i].modFilename == file)
+                    if (modList[i].modFileName == file)
                     {
                         exists = true;
                         break;
@@ -130,7 +130,7 @@ namespace Technic_Modpack_Creator
                 {
                     if (modList[i].uriState == "")
                     {
-                        modList[i].website = uriDatabase.GetSuperiorSite(modList[i].modFilename, modList[i].website);
+                        modList[i].website = uriDatabase.GetSuperiorSite(modList[i].modFileName, modList[i].website);
                     }
                     modList[i].UpdateModValues();
                 }
@@ -238,7 +238,7 @@ namespace Technic_Modpack_Creator
 
             foreach (ModInfo mod in modList)
             {
-                ListViewItem lvi = new ListViewItem(mod.modFilename);
+                ListViewItem lvi = new ListViewItem(mod.modFileName);
 
                 lvi.SubItems.Add(mod.uriState);
                 lvi.SubItems.Add(mod.versionLocal);
@@ -264,7 +264,7 @@ namespace Technic_Modpack_Creator
                 for (int i = 0; i < modListView.Items.Count; i++)
                 {
                     string item = modListView.Items[i].SubItems[0].Text;
-                    if (item == selectedMod.modFilename)
+                    if (item == selectedMod.modFileName)
                     {
                         index = i;
                         break;
@@ -287,7 +287,7 @@ namespace Technic_Modpack_Creator
         private void UpdateModFields()
         {
             updatingFields = true;
-            modNameBox.Text = selectedMod.modFilename;
+            modNameBox.Text = selectedMod.modFileName;
             modSiteBox.Text = selectedMod.website;
             modDownloadBox.Text = selectedMod.dlSite;
             linkStatusLabel.Text = selectedMod.uriState;
@@ -357,8 +357,8 @@ namespace Technic_Modpack_Creator
 
         private void googleButton_Click(object sender, EventArgs e)
         {
-            Process.Start("https://www.google.com/?gws_rd=ssl#q=" + selectedMod.modFilename.Replace(" ","") + "+minecraft");
-            Process.Start("https://www.google.com/?gws_rd=ssl#q=" + MiscFunctions.CleanString(selectedMod.modFilename) + "+minecraft");
+            Process.Start("https://www.google.com/?gws_rd=ssl#q=" + selectedMod.modFileName.Replace(" ","") + "+minecraft");
+            Process.Start("https://www.google.com/?gws_rd=ssl#q=" + MiscFunctions.CleanString(selectedMod.modFileName) + "+minecraft");
         }
 
         private void findSiteButton_Click(object sender, EventArgs e)
@@ -414,14 +414,14 @@ namespace Technic_Modpack_Creator
         {
             modList[e.Item.Index].disabled = !e.Item.Checked;
             modList[e.Item.Index].SetFileNames();
-            e.Item.SubItems[0].Text = modList[e.Item.Index].modFilename;
+            e.Item.SubItems[0].Text = modList[e.Item.Index].modFileName;
         }
 
         private void loadDataButton_Click(object sender, EventArgs e)
         {
             foreach (ModInfo mod in modList)
             {
-                mod.website = uriDatabase.GetSuperiorSite(mod.modFilename, mod.website);
+                mod.website = uriDatabase.GetSuperiorSite(mod.modFileName, mod.website);
                 mod.UpdateModValues();
             }
             UpdateModList();
@@ -431,7 +431,7 @@ namespace Technic_Modpack_Creator
         {
             foreach (ModInfo mod in modList)
             {
-                uriDatabase.ForceSetSite(mod.modFilename, mod.website);
+                uriDatabase.ForceSetSite(mod.modFileName, mod.website);
             }
             uriDatabase.SaveDatabases();
         }
