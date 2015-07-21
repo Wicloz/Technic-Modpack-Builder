@@ -590,7 +590,8 @@ namespace Technic_Modpack_Creator
             {
                 uri = "NONE";
             }
-            else if (uri.EndsWith("/files"))
+
+            if (uri.EndsWith("/files"))
             {
                 uri = uri.Replace("/files", "");
             }
@@ -611,7 +612,8 @@ namespace Technic_Modpack_Creator
             {
                 uri = "NONE";
             }
-            else if (uri.Contains("?page="))
+
+            if (uri.Contains("?page="))
             {
                 char[] endCharList = new char[] { '?' };
                 uri = MiscFunctions.ExtractSection(uri, endCharList);

@@ -352,7 +352,10 @@ namespace Technic_Modpack_Creator
 
         private void openSiteButton_Click(object sender, EventArgs e)
         {
-            Process.Start(selectedMod.website);
+            if (selectedMod.website != "NONE")
+            {
+                Process.Start(selectedMod.website);
+            }
         }
 
         private void googleButton_Click(object sender, EventArgs e)
@@ -376,7 +379,10 @@ namespace Technic_Modpack_Creator
         {
             foreach (ModInfo mod in modList)
             {
-                mod.checkQueued = true;
+                if (mod.uriState != "")
+                {
+                    mod.checkQueued = true;
+                }
             }
         }
 
