@@ -23,6 +23,7 @@ namespace Technic_Modpack_Creator
         private int selectedIndex = -1;
         private bool action = false;
         private bool updatingFields = false;
+        private bool updatingList = false;
         private bool downloadBusy = false;
 
         public ModManager()
@@ -234,6 +235,7 @@ namespace Technic_Modpack_Creator
 
         private void UpdateListView()
         {
+            updatingList = true;
             modListView.Items.Clear();
 
             foreach (ModInfo mod in modList)
@@ -282,6 +284,8 @@ namespace Technic_Modpack_Creator
             {
                 ClearSelection();
             }
+
+            updatingList = false;
         }
 
         private void UpdateModFields()
@@ -418,9 +422,12 @@ namespace Technic_Modpack_Creator
 
         private void modListView_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            modList[e.Item.Index].disabled = !e.Item.Checked;
-            modList[e.Item.Index].SetFileNames();
-            e.Item.SubItems[0].Text = modList[e.Item.Index].modFileName;
+            if (!updatingList)
+            {
+                modList[e.Item.Index].disabled = !e.Item.Checked;
+                modList[e.Item.Index].SetFileNames();
+                e.Item.SubItems[0].Text = modList[e.Item.Index].modFileName;
+            }
         }
 
         private void loadDataButton_Click(object sender, EventArgs e)
