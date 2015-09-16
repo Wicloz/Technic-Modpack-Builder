@@ -192,6 +192,8 @@ namespace Technic_Modpack_Creator
 
         public void UpdateModValues()
         {
+            cd = Directory.GetCurrentDirectory();
+
             //Manage local version
             versionLocal = MiscFunctions.RemoveLetters(modFileName);
 
