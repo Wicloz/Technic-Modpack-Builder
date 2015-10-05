@@ -226,15 +226,11 @@ namespace Technic_Modpack_Creator
             //Manage download site
             if (siteMode == "curse")
             {
-                char[] startCharList = new char[] { 'm', 'c', '-', 'm', 'o', 'd', 's', '/'};
-                char[] endCharList = new char[] { };
-                string modBit = MiscFunctions.ExtractSection(website, endCharList, startCharList) + "/";
+                char[] startCharList = new char[] { 'f', 'i', 'l', 'e', 's', '/'};
+                char[] endCharList = new char[] { '\"' };
+                string modBit = MiscFunctions.ExtractSection(versionLatestRaw, endCharList, startCharList);
 
-                startCharList = modBit.ToCharArray();
-                endCharList = new char[] { '"' };
-                string appendage = MiscFunctions.ExtractSection(versionLatestRaw, endCharList, startCharList);
-
-                dlSite = website + "/" + appendage;
+                dlSite = website + "/files/" + modBit + "/download";
             }
 
             else if (siteMode == "github")
@@ -704,7 +700,7 @@ namespace Technic_Modpack_Creator
 
                             if (siteVersion == thisVersion)
                             {
-                                while (!newVersion.Contains("<a class=\"overflow-tip\" href=\"/mc-mods/"))
+                                while (!newVersion.Contains("<a class=\"overflow-tip\" href=\"/projects/"))
                                 {
                                     newVersion = sr.ReadLine().Trim();
                                 }
