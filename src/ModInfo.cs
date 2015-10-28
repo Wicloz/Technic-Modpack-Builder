@@ -28,7 +28,7 @@ namespace Technic_Modpack_Creator
                 return downloadFolder + "\\" + newFileName;
             }
         }
-        private string curseIdentifier = "minecraft.curseforge.com/mc-mods/";
+        private string curseIdentifier = "minecraft.curseforge.com/";
         private string forumIdentifier = "minecraftforum.net/forums/mapping-and-modding/minecraft-mods/";
         private string githubIdentifier = "github.com";
         private string mcVersion = "";
