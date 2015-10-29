@@ -96,15 +96,15 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 69);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(54, 13);
+            this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 5;
-            this.label2.Text = "Site Suffix";
+            this.label2.Text = "Modpack ID";
             // 
             // siteBox
             // 
-            this.siteBox.Location = new System.Drawing.Point(72, 66);
+            this.siteBox.Location = new System.Drawing.Point(84, 66);
             this.siteBox.Name = "siteBox";
-            this.siteBox.Size = new System.Drawing.Size(200, 20);
+            this.siteBox.Size = new System.Drawing.Size(188, 20);
             this.siteBox.TabIndex = 7;
             // 
             // folderBox

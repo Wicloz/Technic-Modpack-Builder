@@ -166,7 +166,7 @@ namespace Technic_Modpack_Creator
         {
             if (siteBox.Text != "")
             {
-                Process.Start("http://www.technicpack.net/" + siteBox.Text);
+                Process.Start("http://www.technicpack.net/modpack/edit/" + siteBox.Text + "/versions");
             }
 
             if (modpackVersionBox.Text != "")
