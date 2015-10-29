@@ -154,7 +154,7 @@ namespace Technic_Modpack_Creator
             //Copy all configs
             foreach (string file in Directory.GetFiles(testFolder, "*.cfg", SearchOption.AllDirectories))
             {
-                if (!file.Contains(testFolder + "\\asm") && !file.Contains(testFolder + "\\saves") && !file.Contains(testFolder + "\\crash-reports") && !file.Contains(testFolder + "\\backups") && !file.Contains(testFolder + "\\compendiumunlocks"))
+                if (!file.Contains(testFolder + "\\asm") && !file.Contains(testFolder + "\\saves") && !file.Contains(testFolder + "\\crash-reports") && !file.Contains(testFolder + "\\backups") && !file.Contains(testFolder + "\\compendiumunlocks") && !file.Contains(testFolder + "\\localconfig.cfg"))
                 {
                     string newFile = file.Replace(testFolder, cd + "\\modpack");
 
