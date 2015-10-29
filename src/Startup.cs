@@ -170,7 +170,7 @@ namespace Technic_Modpack_Creator
         {
             if (!File.Exists(cd + "\\settings\\mpexceptions.txt"))
             {
-                File.WriteAllText(cd + "\\settings\\mpexceptions.txt", "damageindicator" + "\n" + "bacr" + "\n" + "neiaddons" + "\n" + "minimap" + "\n" + "inventorytweaks" + "\n" + "mapwriter" + "\n" + "dynamiclights" + "\n" + "shatter" + "\n" + "bettertitlescreen" + "\n" + "journeymap" + "\n" + "notenoughkeys" + "\n" + "optifine" + "\n" + "java7checker");
+                File.WriteAllText(cd + "\\settings\\mpexceptions.txt", "damageindicator" + "\n" + "bacr" + "\n" + "neiaddons" + "\n" + "minimap" + "\n" + "inventorytweaks" + "\n" + "mapwriter" + "\n" + "dynamiclights" + "\n" + "shatter" + "\n" + "bettertitlescreen" + "\n" + "journeymap" + "\n" + "notenoughkeys" + "\n" + "optifine" + "\n" + "java7checker" + "\n" + "java8checker" + "\n" + "defaultkeys");
             }
 
             if (!File.Exists(cd + "\\modpack\\bin\\modpack.jar"))
