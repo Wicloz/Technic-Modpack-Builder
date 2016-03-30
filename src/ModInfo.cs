@@ -8,23 +8,17 @@ using System.Net;
 using System.IO.Compression;
 using System.Diagnostics;
 
-namespace Technic_Modpack_Creator
-{
+namespace Technic_Modpack_Creator {
     [Serializable]
-    class ModInfo : System.IComparable<ModInfo>
-    {
+    class ModInfo : System.IComparable<ModInfo> {
         private string cd = Directory.GetCurrentDirectory();
-        private string downloadFolder
-        {
-            get
-            {
+        private string downloadFolder {
+            get {
                 return cd + "\\downloads\\" + MiscFunctions.CleanString(modFileName);
             }
         }
-        private string downloadedFile
-        {
-            get
-            {
+        private string downloadedFile {
+            get {
                 return downloadFolder + "\\" + newFileName;
             }
         }
@@ -50,7 +44,7 @@ namespace Technic_Modpack_Creator
 
         public string website1 = "NONE";
         public string website2 = "NONE";
-        public string website3= "NONE";
+        public string website3 = "NONE";
         public string website4 = "NONE";
 
         //Dowload + Check info
@@ -64,216 +58,167 @@ namespace Technic_Modpack_Creator
         private bool _checkBusy = false;
         private bool _downloadBusy = false;
 
-        public bool findBusy
-        {
-            get
-            {
+        public bool findBusy {
+            get {
                 return _findBusy;
             }
-            set
-            {
+            set {
                 _findBusy = value;
             }
         }
-        public bool checkBusy
-        {
-            get
-            {
+        public bool checkBusy {
+            get {
                 return _checkBusy;
             }
-            set
-            {
+            set {
                 _checkBusy = value;
             }
         }
-        public bool downloadBusy
-        {
-            get
-            {
+        public bool downloadBusy {
+            get {
                 return _downloadBusy;
             }
-            set
-            {
+            set {
                 _downloadBusy = value;
             }
         }
-        public bool isWorking
-        {
-            get
-            {
+        public bool isWorking {
+            get {
                 return (findBusy || checkBusy || downloadBusy);
             }
         }
 
-        public string uriState
-        {
-            get
-            {
-                if (website == "NONE")
-                {
+        public string uriState {
+            get {
+                if (website == "NONE") {
                     return "";
                 }
-                else if (dlSite != "NONE")
-                {
+                else if (dlSite != "NONE") {
                     return "Automatic";
                 }
-                else if (siteMode != "NONE")
-                {
+                else if (siteMode != "NONE") {
                     return "Manual";
                 }
-                else
-                {
+                else {
                     return "Unsupported";
                 }
             }
         }
-        public string updateState
-        {
-            get
-            {
-                if (checkQueued)
-                {
+        public string updateState {
+            get {
+                if (checkQueued) {
                     return "Checking for Update ...";
                 }
-                else if (findQueued)
-                {
+                else if (findQueued) {
                     return "Searching for Website ...";
                 }
-                else if (downloadQueued && progress != 0)
-                {
+                else if (downloadQueued && progress != 0) {
                     return "Downloading: " + progress + "%";
                 }
-                else if (downloadQueued)
-                {
+                else if (downloadQueued) {
                     return "Awaiting Download ...";
                 }
-                else if (canUpdate)
-                {
+                else if (canUpdate) {
                     return "Update Available";
                 }
-                else
-                {
+                else {
                     return "";
                 }
             }
         }
-        public bool canUpdate
-        {
-            get
-            {
+        public bool canUpdate {
+            get {
                 return _canUpdate;
             }
-            set
-            {
+            set {
                 _canUpdate = value;
-                if (canUpdate)
-                {
+                if (canUpdate) {
                     Directory.CreateDirectory(downloadFolder);
                 }
-                else
-                {
-                    try
-                    {
+                else {
+                    try {
                         Directory.Delete(downloadFolder, true);
                     }
-                    catch
-                    { }
+                    catch { }
                 }
             }
         }
 
-        public ModInfo()
-        { }
+        public ModInfo () { }
 
-        public ModInfo(string fileName)
-        {
+        public ModInfo (string fileName) {
             modFileName = fileName;
         }
 
-        public void UpdateModValues()
-        {
+        public void UpdateModValues () {
             cd = Directory.GetCurrentDirectory();
 
             //Manage local version
             versionLocal = MiscFunctions.RemoveLetters(modFileName);
 
             //Determine site mode
-            if (website == "")
-            {
+            if (website == "") {
                 website = "NONE";
             }
 
-            if (website.Contains(curseIdentifier))
-            {
+            if (website.Contains(curseIdentifier)) {
                 siteMode = "curse";
                 website = ParseCurseUri(website);
             }
-            else if (website.Contains(forumIdentifier))
-            {
+            else if (website.Contains(forumIdentifier)) {
                 siteMode = "forum";
                 website = ParseForumUri(website);
             }
-            else if (website.Contains(githubIdentifier))
-            {
+            else if (website.Contains(githubIdentifier)) {
                 siteMode = "github";
                 website = ParseGithubUri(website);
             }
-            else
-            {
+            else {
                 siteMode = "NONE";
             }
 
             //Manage download site
-            if (siteMode == "curse")
-            {
-                char[] startCharList = new char[] { 'f', 'i', 'l', 'e', 's', '/'};
+            if (siteMode == "curse") {
+                char[] startCharList = new char[] { 'f', 'i', 'l', 'e', 's', '/' };
                 char[] endCharList = new char[] { '\"' };
                 string modBit = MiscFunctions.ExtractSection(versionLatestRaw, endCharList, startCharList);
 
                 dlSite = website + "/files/" + modBit + "/download";
             }
 
-            else if (siteMode == "github")
-            {
+            else if (siteMode == "github") {
                 string bit = website.Replace("https://github.com", "").Replace("/latest", "/download");
                 string appendage = versionLatestRaw.Replace("<a href=\"", "").Replace(bit, "").Replace("\" rel=\"nofollow\">", "");
                 dlSite = website.Replace("/latest", "/download") + appendage;
             }
 
-            else
-            {
+            else {
                 dlSite = "NONE";
             }
         }
 
-        public void SetFileNames()
-        {
-            if (disabled && !newFileName.Contains(".disabled"))
-            {
+        public void SetFileNames () {
+            if (disabled && !newFileName.Contains(".disabled")) {
                 newFileName += ".disabled";
             }
-            if (disabled && !modFileName.Contains(".disabled"))
-            {
+            if (disabled && !modFileName.Contains(".disabled")) {
                 string modPath = cd + "\\modpack\\mods\\" + modFileName;
                 File.Move(modPath, modPath + ".disabled");
                 modFileName += ".disabled";
             }
 
-            if (!disabled)
-            {
+            if (!disabled) {
                 newFileName = newFileName.Replace(".disabled", "");
                 modFileName = modFileName.Replace(".disabled", "");
                 string modPath = cd + "\\modpack\\mods\\" + modFileName;
 
-                if (File.Exists(modPath + ".disabled"))
-                {
+                if (File.Exists(modPath + ".disabled")) {
                     File.Move(modPath + ".disabled", modPath);
                 }
             }
         }
 
-        public void FindWebsiteUri()
-        {
+        public void FindWebsiteUri () {
             findBusy = true;
             WebClient client1 = new WebClient();
             client1.DownloadStringCompleted += new DownloadStringCompletedEventHandler(findCurseCompleted);
@@ -286,8 +231,7 @@ namespace Technic_Modpack_Creator
             progress = 0;
             findMode++;
 
-            switch (findMode)
-            {
+            switch (findMode) {
                 case 1:
                     website = "NONE"; //debug
                     client1.DownloadStringAsync(new Uri("http://minecraft.curseforge.com/search?search=" + MiscFunctions.CleanModName(modFileName)));
@@ -311,20 +255,16 @@ namespace Technic_Modpack_Creator
                 default:
                     website4 = website;
                     website = "NONE"; //debug
-                    if (website1 != "NONE")
-                    {
+                    if (website1 != "NONE") {
                         website = website1;
                     }
-                    else if (website2 != "NONE")
-                    {
+                    else if (website2 != "NONE") {
                         website = website2;
                     }
-                    else if (website3 != "NONE")
-                    {
+                    else if (website3 != "NONE") {
                         website = website3;
                     }
-                    else if (website4 != "NONE")
-                    {
+                    else if (website4 != "NONE") {
                         website = website4;
                     }
                     website1 = website1.Replace(forumIdentifier, "").Replace(curseIdentifier, "").Replace("http://", "").Replace("www.", "");
@@ -343,38 +283,29 @@ namespace Technic_Modpack_Creator
             }
         }
 
-        private void findCurseCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            if (e != null && e.Error == null && !String.IsNullOrEmpty(e.Result))
-            {
-                using (StringReader sr = new StringReader(e.Result))
-                {
+        private void findCurseCompleted (object sender, DownloadStringCompletedEventArgs e) {
+            if (e != null && e.Error == null && !String.IsNullOrEmpty(e.Result)) {
+                using (StringReader sr = new StringReader(e.Result)) {
                     List<string> results = new List<string>();
 
-                    while (true)
-                    {
-                        try
-                        {
+                    while (true) {
+                        try {
                             string currentline = sr.ReadLine().Trim();
-                            if (currentline.Contains("<a href=\"/mc-mods/"))
-                            {
+                            if (currentline.Contains("<a href=\"/mc-mods/")) {
                                 results.Add(currentline);
                             }
                         }
-                        catch
-                        {
+                        catch {
                             break;
                         }
                     }
 
-                    foreach (string result in results)
-                    {
+                    foreach (string result in results) {
                         char[] startCharList = new char[] { '"', '>' };
                         char[] endCharList = new char[] { '<' };
                         string foundModname = MiscFunctions.ExtractSection(result, endCharList, startCharList);
 
-                        if (MiscFunctions.CleanString(foundModname) == MiscFunctions.CleanString(modFileName))
-                        {
+                        if (MiscFunctions.CleanString(foundModname) == MiscFunctions.CleanString(modFileName)) {
                             startCharList = new char[] { '=', '"' };
                             endCharList = new char[] { '"' };
                             string linkSection = MiscFunctions.ExtractSection(result, endCharList, startCharList);
@@ -388,12 +319,10 @@ namespace Technic_Modpack_Creator
                 FindWebsiteUri(); //debug
                 return; //debug
 
-                if (siteMode == "NONE")
-                {
+                if (siteMode == "NONE") {
                     FindWebsiteUri();
                 }
-                else
-                {
+                else {
                     progress = 0;
                     findMode = 0;
                     findQueued = false;
@@ -401,23 +330,17 @@ namespace Technic_Modpack_Creator
                     updateList = true;
                 }
             }
-            else
-            {
+            else {
                 FindWebsiteUri();
             }
         }
 
-        private void findLuckyCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            if (e != null && e.Error == null && !String.IsNullOrEmpty(e.Result))
-            {
-                using (StringReader sr = new StringReader(e.Result))
-                {
-                    try
-                    {
+        private void findLuckyCompleted (object sender, DownloadStringCompletedEventArgs e) {
+            if (e != null && e.Error == null && !String.IsNullOrEmpty(e.Result)) {
+                using (StringReader sr = new StringReader(e.Result)) {
+                    try {
                         string currentline = "";
-                        while (!currentline.Contains("<a href=\"/mc-mods/"))
-                        {
+                        while (!currentline.Contains("<a href=\"/mc-mods/")) {
                             currentline = sr.ReadLine().Trim();
                         }
 
@@ -429,14 +352,12 @@ namespace Technic_Modpack_Creator
                         endCharList = new char[] { '<' };
                         string foundModname = MiscFunctions.ExtractSection(currentline, endCharList, startCharList);
 
-                        if (!MiscFunctions.PartialMatch(modFileName, foundModname))
-                        {
+                        if (!MiscFunctions.PartialMatch(modFileName, foundModname)) {
                             website = "No Patial Match: "; //debug
                         }
                         website += ParseCurseUri("http://minecraft.curseforge.com" + linkSection);
                     }
-                    catch
-                    {
+                    catch {
                         website = "NONE";
                     }
                 }
@@ -445,12 +366,10 @@ namespace Technic_Modpack_Creator
                 FindWebsiteUri(); //debug
                 return; //debug
 
-                if (siteMode == "NONE")
-                {
+                if (siteMode == "NONE") {
                     FindWebsiteUri();
                 }
-                else
-                {
+                else {
                     progress = 0;
                     findMode = 0;
                     findQueued = false;
@@ -458,16 +377,13 @@ namespace Technic_Modpack_Creator
                     updateList = true;
                 }
             }
-            else
-            {
+            else {
                 FindWebsiteUri();
             }
         }
 
-        private void findGoogleCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            if (e != null && e.Error == null && !String.IsNullOrEmpty(e.Result))
-            {
+        private void findGoogleCompleted (object sender, DownloadStringCompletedEventArgs e) {
+            if (e != null && e.Error == null && !String.IsNullOrEmpty(e.Result)) {
                 char[] startCharList = new char[] { 'q', '=' };
                 char[] endCharList = new char[] { '&' };
                 website = GetWebsiteFromResults(e.Result, "<a href=\"", startCharList, endCharList);
@@ -476,12 +392,10 @@ namespace Technic_Modpack_Creator
                 FindWebsiteUri(); //debug
                 return; //debug
 
-                if (siteMode == "NONE")
-                {
+                if (siteMode == "NONE") {
                     FindWebsiteUri();
                 }
-                else
-                {
+                else {
                     progress = 0;
                     findMode = 0;
                     findQueued = false;
@@ -489,16 +403,13 @@ namespace Technic_Modpack_Creator
                     updateList = true;
                 }
             }
-            else
-            {
+            else {
                 FindWebsiteUri();
             }
         }
 
-        private void findYahooCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            if (e != null && e.Error == null && !String.IsNullOrEmpty(e.Result))
-            {
+        private void findYahooCompleted (object sender, DownloadStringCompletedEventArgs e) {
+            if (e != null && e.Error == null && !String.IsNullOrEmpty(e.Result)) {
                 char[] startCharList = new char[] { };
                 char[] endCharList = new char[] { '"' };
                 website = GetWebsiteFromResults(e.Result, "href=\"", startCharList, endCharList);
@@ -507,12 +418,10 @@ namespace Technic_Modpack_Creator
                 FindWebsiteUri(); //debug
                 return; //debug
 
-                if (siteMode == "NONE")
-                {
+                if (siteMode == "NONE") {
                     FindWebsiteUri();
                 }
-                else
-                {
+                else {
                     progress = 0;
                     findMode = 0;
                     findQueued = false;
@@ -520,32 +429,25 @@ namespace Technic_Modpack_Creator
                     updateList = true;
                 }
             }
-            else
-            {
+            else {
                 FindWebsiteUri();
             }
         }
 
-        private string GetWebsiteFromResults(string webpage, string delim, char[] startChars, char[] endChars)
-        {
+        private string GetWebsiteFromResults (string webpage, string delim, char[] startChars, char[] endChars) {
             List<string> results = new List<string>();
-            using (StringReader sr = new StringReader(webpage))
-            {
+            using (StringReader sr = new StringReader(webpage)) {
                 string currentLine = "";
-                while (true)
-                {
+                while (true) {
                     currentLine = sr.ReadLine();
 
-                    if (currentLine != null)
-                    {
-                        if (currentLine.Contains(delim))
-                        {
+                    if (currentLine != null) {
+                        if (currentLine.Contains(delim)) {
                             string[] delims = new string[] { delim };
                             results.AddRange(currentLine.Split(delims, StringSplitOptions.RemoveEmptyEntries));
                         }
                     }
-                    else
-                    {
+                    else {
                         break;
                     }
                 }
@@ -553,48 +455,39 @@ namespace Technic_Modpack_Creator
                 string curseLink = "NONE";
                 string forumLink = "NONE";
 
-                for (int i = 1; i < results.Count; i++)
-                {
+                for (int i = 1; i < results.Count; i++) {
                     results[i] = MiscFunctions.ExtractSection(results[i], endChars, startChars).Replace("%2f", "/").Replace("%3a", ":");
 
                     char[] startCharList = new char[] { 'm', 'o', 'd', 's', '/' };
                     char[] endCharList = new char[] { };
                     string foundModname = MiscFunctions.ExtractSection(results[i], endCharList, startCharList);
 
-                    if (curseLink == "NONE" && results[i].Contains(curseIdentifier) && MiscFunctions.PartialMatch(modFileName, foundModname))
-                    {
+                    if (curseLink == "NONE" && results[i].Contains(curseIdentifier) && MiscFunctions.PartialMatch(modFileName, foundModname)) {
                         curseLink = ParseCurseUri(results[i]);
                     }
-                    if (forumLink == "NONE" && results[i].Contains(forumIdentifier) && MiscFunctions.PartialMatch(modFileName, foundModname))
-                    {
+                    if (forumLink == "NONE" && results[i].Contains(forumIdentifier) && MiscFunctions.PartialMatch(modFileName, foundModname)) {
                         forumLink = ParseForumUri(results[i]);
                     }
                 }
 
-                if (curseLink != "NONE")
-                {
+                if (curseLink != "NONE") {
                     return curseLink;
                 }
-                else
-                {
+                else {
                     return forumLink;
                 }
             }
         }
 
-        private string ParseCurseUri(string uri)
-        {
-            if (!uri.Contains(curseIdentifier) || uri == "http://minecraft.curseforge.com/mc-mods/minecraft")
-            {
+        private string ParseCurseUri (string uri) {
+            if (!uri.Contains(curseIdentifier) || uri == "http://minecraft.curseforge.com/mc-mods/minecraft") {
                 uri = "NONE";
             }
 
-            if (uri.EndsWith("/files"))
-            {
+            if (uri.EndsWith("/files")) {
                 uri = uri.Replace("/files", "");
             }
-            else if (uri.Contains("/files/"))
-            {
+            else if (uri.Contains("/files/")) {
                 char[] startCharList = new char[] { 'f', 'i', 'l', 'e', 's', '/' };
                 char[] endCharList = new char[] { };
                 string garbage = "/files/" + MiscFunctions.ExtractSection(uri, endCharList, startCharList);
@@ -604,15 +497,12 @@ namespace Technic_Modpack_Creator
             return uri;
         }
 
-        private string ParseForumUri(string uri)
-        {
-            if (!uri.Contains(forumIdentifier) || uri == "http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods")
-            {
+        private string ParseForumUri (string uri) {
+            if (!uri.Contains(forumIdentifier) || uri == "http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods") {
                 uri = "NONE";
             }
 
-            if (uri.Contains("?page="))
-            {
+            if (uri.Contains("?page=")) {
                 char[] endCharList = new char[] { '?' };
                 uri = MiscFunctions.ExtractSection(uri, endCharList);
             }
@@ -620,22 +510,18 @@ namespace Technic_Modpack_Creator
             return uri;
         }
 
-        private string ParseGithubUri(string uri)
-        {
-            if (!uri.Contains(githubIdentifier))
-            {
+        private string ParseGithubUri (string uri) {
+            if (!uri.Contains(githubIdentifier)) {
                 uri = "NONE";
             }
 
             return uri;
         }
 
-        public void CheckForUpdate(string mcVersion)
-        {
+        public void CheckForUpdate (string mcVersion) {
             this.mcVersion = mcVersion;
 
-            if (siteMode != "NONE")
-            {
+            if (siteMode != "NONE") {
                 checkBusy = true;
                 WebClient client = new WebClient();
                 client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
@@ -643,8 +529,7 @@ namespace Technic_Modpack_Creator
                 progress = 10;
                 client.DownloadStringAsync(new Uri(website));
             }
-            else
-            {
+            else {
                 checkQueued = false;
                 versionLatest = "N/A";
                 releaseDate = "N/A";
@@ -652,13 +537,10 @@ namespace Technic_Modpack_Creator
             }
         }
 
-        private void checkDownloadCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            if (e != null && e.Error == null && !String.IsNullOrEmpty(e.Result))
-            {
+        private void checkDownloadCompleted (object sender, DownloadStringCompletedEventArgs e) {
+            if (e != null && e.Error == null && !String.IsNullOrEmpty(e.Result)) {
                 progress = 100;
-                using (StringReader sr = new StringReader(e.Result))
-                {
+                using (StringReader sr = new StringReader(e.Result)) {
                     string newVersion = "";
                     string newFile = "";
                     releaseDate = "N/A";
@@ -666,15 +548,11 @@ namespace Technic_Modpack_Creator
                     versionLatest = "N/A";
                     newFileName = "";
 
-                    if (siteMode == "curse")
-                    {
-                        while (true)
-                        {
-                            while (!newVersion.Contains("<h4 class=\"e-sidebar-subheader overflow-tip\">Minecraft"))
-                            {
+                    if (siteMode == "curse") {
+                        while (true) {
+                            while (!newVersion.Contains("<h4 class=\"e-sidebar-subheader overflow-tip\">Minecraft")) {
                                 newVersion = sr.ReadLine();
-                                if (newVersion == null)
-                                {
+                                if (newVersion == null) {
                                     versionLatest = "MC version not found";
                                     progress = 0;
                                     checkQueued = false;
@@ -690,18 +568,14 @@ namespace Technic_Modpack_Creator
                             string siteVersion = MiscFunctions.ExtractSection(newVersion.ToLower(), endCharList, startCharList).Trim();
 
                             string thisVersion = "";
-                            try
-                            {
+                            try {
                                 char[] delim = new char[] { '.' };
                                 thisVersion = mcVersion.Split(delim)[0] + "." + mcVersion.Split(delim)[1];
                             }
-                            catch
-                            { }
+                            catch { }
 
-                            if (siteVersion == thisVersion)
-                            {
-                                while (!newVersion.Contains("<a class=\"overflow-tip\" href=\"/projects/"))
-                                {
+                            if (siteVersion == thisVersion) {
+                                while (!newVersion.Contains("<a class=\"overflow-tip\" href=\"/projects/")) {
                                     newVersion = sr.ReadLine().Trim();
                                 }
 
@@ -710,10 +584,8 @@ namespace Technic_Modpack_Creator
                                 newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList).Replace(" ", "").ToLower().Replace("&#x27;", "").Replace("+", "");
 
                                 string[] modNames = new string[] { "reliquary", "carpentersblocks", "hardcoreenderexpansion" };
-                                foreach (string mod in modNames)
-                                {
-                                    if (MiscFunctions.CleanString(website).Contains(mod) && !MiscFunctions.CleanString(newFile).Contains(mod))
-                                    {
+                                foreach (string mod in modNames) {
+                                    if (MiscFunctions.CleanString(website).Contains(mod) && !MiscFunctions.CleanString(newFile).Contains(mod)) {
                                         newFile = mod + "-" + newFile;
                                     }
                                 }
@@ -724,26 +596,21 @@ namespace Technic_Modpack_Creator
                                 releaseDate = MiscFunctions.ExtractSection(dateLine, endCharList, startCharList);
                                 break;
                             }
-                            else
-                            {
+                            else {
                                 newVersion = sr.ReadLine().Trim();
                             }
                         }
                     }
 
-                    if (siteMode == "forum")
-                    {
-                        while (!newVersion.Contains("<title>"))
-                        {
+                    if (siteMode == "forum") {
+                        while (!newVersion.Contains("<title>")) {
                             newVersion = sr.ReadLine().Trim();
                         }
                         newFile = "undefined-" + MiscFunctions.RemoveLetters(newVersion);
                     }
 
-                    if (siteMode == "github")
-                    {
-                        while (!newVersion.Contains("<a href=\"" + website.Replace("https://github.com", "").Replace("/latest", "/download/")))
-                        {
+                    if (siteMode == "github") {
+                        while (!newVersion.Contains("<a href=\"" + website.Replace("https://github.com", "").Replace("/latest", "/download/"))) {
                             newVersion = sr.ReadLine().Trim();
                         }
 
@@ -752,12 +619,10 @@ namespace Technic_Modpack_Creator
                         newFile = MiscFunctions.ExtractSection(newVersion, endCharList, startCharList).Replace(" ", "").ToLower();
                     }
 
-                    if (!newFile.Contains(".zip") && !newFile.Contains(".jar"))
-                    {
+                    if (!newFile.Contains(".zip") && !newFile.Contains(".jar")) {
                         newFile += ".jar";
                     }
-                    if (disabled && !newFile.Contains(".disabled"))
-                    {
+                    if (disabled && !newFile.Contains(".disabled")) {
                         newFile += ".disabled";
                     }
 
@@ -765,12 +630,10 @@ namespace Technic_Modpack_Creator
                     newFileName = Path.GetFileName(newFile);
                     versionLatest = MiscFunctions.RemoveLetters(newFileName);
 
-                    if (versionLatestRaw != versionLocalRaw)
-                    {
+                    if (versionLatestRaw != versionLocalRaw) {
                         canUpdate = true;
                     }
-                    else
-                    {
+                    else {
                         canUpdate = false;
                     }
                 }
@@ -781,35 +644,28 @@ namespace Technic_Modpack_Creator
                 checkBusy = false;
                 updateList = true;
             }
-            else
-            {
+            else {
                 progress = 0;
                 checkQueued = false;
                 checkBusy = false;
             }
         }
 
-        public void UpdateMod()
-        {
-            if (Directory.Exists(downloadFolder) && Directory.GetFiles(downloadFolder).Length > 0)
-            {
+        public void UpdateMod () {
+            if (Directory.Exists(downloadFolder) && Directory.GetFiles(downloadFolder).Length > 0) {
                 newFileName = Path.GetFileName(Directory.GetFiles(downloadFolder)[0]);
-                if (newFileName.EndsWith(".zip") || newFileName.EndsWith(".jar"))
-                {
+                if (newFileName.EndsWith(".zip") || newFileName.EndsWith(".jar")) {
                     downloadBusy = true;
                     MoveDownloadedMod();
                 }
-                else
-                {
+                else {
                     downloadQueued = false;
                 }
             }
 
-            else if (uriState == "Automatic")
-            {
+            else if (uriState == "Automatic") {
                 downloadBusy = true;
-                if (Directory.Exists(downloadFolder))
-                {
+                if (Directory.Exists(downloadFolder)) {
                     Directory.Delete(downloadFolder, true);
                 }
                 Directory.CreateDirectory(downloadFolder);
@@ -821,27 +677,21 @@ namespace Technic_Modpack_Creator
                 client.DownloadFileAsync(new Uri(dlSite), downloadedFile);
             }
 
-            else
-            {
+            else {
                 downloadQueued = false;
             }
         }
 
-        private void modDownloadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
-        {
-            try
-            {
-                if (File.Exists(downloadedFile))
-                {
+        private void modDownloadCompleted (object sender, System.ComponentModel.AsyncCompletedEventArgs e) {
+            try {
+                if (File.Exists(downloadedFile)) {
                     //ZipFile.ExtractToDirectory(downloadedFile, downloadFolder + "\\extract");
                     progress = 100;
                     MoveDownloadedMod();
                 }
             }
-            catch
-            {
-                if (Directory.Exists(downloadFolder))
-                {
+            catch {
+                if (Directory.Exists(downloadFolder)) {
                     Directory.Delete(downloadFolder, true);
                 }
                 Directory.CreateDirectory(downloadFolder);
@@ -852,8 +702,7 @@ namespace Technic_Modpack_Creator
             }
         }
 
-        private void MoveDownloadedMod()
-        {
+        private void MoveDownloadedMod () {
             string newModLocation = cd + "\\modpack\\mods\\" + newFileName;
             string oldModLocation = cd + "\\modpack\\mods\\" + modFileName;
 
@@ -872,35 +721,28 @@ namespace Technic_Modpack_Creator
             canUpdate = false;
         }
 
-        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
+        private void client_DownloadProgressChanged (object sender, DownloadProgressChangedEventArgs e) {
             progress = 10 + Convert.ToInt32(e.ProgressPercentage * 0.8);
         }
 
-        public int CompareTo(ModInfo other)
-        {
-            if (other == null)
-            {
+        public int CompareTo (ModInfo other) {
+            if (other == null) {
                 return 1;
             }
 
             char[] charArray1 = (this.modFileName).ToCharArray();
             char[] charArray2 = (other.modFileName).ToCharArray();
 
-            if (charArray1.Length == 0 || charArray2.Length == 0)
-            {
+            if (charArray1.Length == 0 || charArray2.Length == 0) {
                 return 0;
             }
 
-            for (int i = 0; i < charArray1.Length; i++)
-            {
-                if (charArray1[i].GetHashCode() != charArray2[i].GetHashCode())
-                {
+            for (int i = 0; i < charArray1.Length; i++) {
+                if (charArray1[i].GetHashCode() != charArray2[i].GetHashCode()) {
                     return charArray1[i].GetHashCode() - charArray2[i].GetHashCode();
                 }
 
-                if (i + 1 >= charArray2.Length)
-                {
+                if (i + 1 >= charArray2.Length) {
                     return -1;
                 }
             }

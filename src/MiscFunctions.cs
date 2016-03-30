@@ -4,34 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technic_Modpack_Creator
-{
-    class MiscFunctions
-    {
-        public static bool PartialMatch (string localName, string onlineName)
-        {
+namespace Technic_Modpack_Creator {
+    class MiscFunctions {
+        public static bool PartialMatch (string localName, string onlineName) {
             string cleanS1 = CleanString(CleanModName(localName)).Replace("mod", "");
             string cleanS2 = CleanString(onlineName).Replace("mod", "");
 
-            if (cleanS1.Contains(cleanS2) || cleanS2.Contains(cleanS1))
-            {
+            if (cleanS1.Contains(cleanS2) || cleanS2.Contains(cleanS1)) {
                 return true;
             }
-            else
-            {
+            else {
                 return false;
             }
         }
 
-        public static string CleanModName(string originalName)
-        {
+        public static string CleanModName (string originalName) {
             char[] delim = new char[] { '-' };
             string proDash = originalName.Split(delim)[0];
-            return CleanString(proDash).Replace("botaniar","botania");
+            return CleanString(proDash).Replace("botaniar", "botania");
         }
 
-        public static string CleanString(string originalString)
-        {
+        public static string CleanString (string originalString) {
             return originalString
                 .ToLower()
                     .Replace("0", "")
@@ -58,8 +51,7 @@ namespace Technic_Modpack_Creator
                     .Replace("}", "");
         }
 
-        public static string RemoveLetters(string originalString)
-        {
+        public static string RemoveLetters (string originalString) {
             string returnString = "";
             char[] charArray = originalString.Replace(" ", "").ToLower().ToCharArray();
             List<char> allowedList = new List<char>();
@@ -78,15 +70,12 @@ namespace Technic_Modpack_Creator
             returnString += "#";
             bool pointMade = true;
 
-            foreach (char c in charArray)
-            {
-                if (allowedList.Contains(c))
-                {
+            foreach (char c in charArray) {
+                if (allowedList.Contains(c)) {
                     returnString += c;
                     pointMade = false;
                 }
-                else if (!pointMade)
-                {
+                else if (!pointMade) {
                     returnString += ".";
                     pointMade = true;
                 }
@@ -96,17 +85,14 @@ namespace Technic_Modpack_Creator
             return returnString.Replace(".#", "").Replace("#.", "").Replace("#", "").Replace("..", ".").Replace("..", ".").Replace("..", ".");
         }
 
-        public static string ExtractSection(string s, char[] endChars)
-        {
+        public static string ExtractSection (string s, char[] endChars) {
             string _s = "##" + s;
             char[] startCharList = new char[] { '#', '#' };
             return MiscFunctions.ExtractSection(_s, endChars, startCharList);
         }
 
-        public static string ExtractSection(string s, char[] endChars, char[] startChars)
-        {
-            if (startChars == null || startChars.Length == 0)
-            {
+        public static string ExtractSection (string s, char[] endChars, char[] startChars) {
+            if (startChars == null || startChars.Length == 0) {
                 s = "##" + s;
                 startChars = new char[] { '#', '#' };
             }
@@ -116,28 +102,22 @@ namespace Technic_Modpack_Creator
             char[] charArray = s.ToCharArray();
             int checkChar = 0;
 
-            foreach (char c in charArray)
-            {
-                if (startChars[checkChar] == c)
-                {
+            foreach (char c in charArray) {
+                if (startChars[checkChar] == c) {
                     checkChar++;
                 }
-                else
-                {
+                else {
                     checkChar = 0;
                 }
 
-                if (foundChars && endChars.Contains(c))
-                {
+                if (foundChars && endChars.Contains(c)) {
                     break;
                 }
-                else if (foundChars)
-                {
+                else if (foundChars) {
                     returnString += c;
                 }
 
-                if (startChars.Length == checkChar)
-                {
+                if (startChars.Length == checkChar) {
                     foundChars = true;
                     checkChar = 0;
                 }

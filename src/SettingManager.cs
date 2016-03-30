@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Technic_Modpack_Creator
-{
-    class SettingManager
-    {
+namespace Technic_Modpack_Creator {
+    class SettingManager {
         public string minecraftVersionLoad;
         public string modpackVersionLoad;
         public string nameLoad;
@@ -18,10 +16,8 @@ namespace Technic_Modpack_Creator
 
         private string cd = Directory.GetCurrentDirectory();
 
-        public SettingManager ()
-        {
-            if (File.Exists(cd + "\\settings\\settings.cfg"))
-            {
+        public SettingManager () {
+            if (File.Exists(cd + "\\settings\\settings.cfg")) {
                 SettingData data = SaveLoad.LoadFileXml<SettingData>(cd + "\\settings\\settings.cfg");
 
                 minecraftVersionLoad = data.minecraftVersion;
@@ -30,8 +26,7 @@ namespace Technic_Modpack_Creator
                 locationLoad = data.location;
                 includeOptionsLoad = data.includeOptions;
             }
-            else
-            {
+            else {
                 minecraftVersionLoad = "";
                 modpackVersionLoad = "";
                 nameLoad = "";
@@ -42,26 +37,22 @@ namespace Technic_Modpack_Creator
             }
         }
 
-        public void SaveSettings(string MinecraftVersion, string ModpackVersion, string Name, string Location, bool IncludeOptions)
-        {
+        public void SaveSettings (string MinecraftVersion, string ModpackVersion, string Name, string Location, bool IncludeOptions) {
             SaveLoad.SaveFileXml(new SettingData(MinecraftVersion, ModpackVersion, Name, Location, IncludeOptions), cd + "\\settings\\settings.cfg");
         }
     }
 
     [Serializable]
-    public class SettingData
-    {
+    public class SettingData {
         public string minecraftVersion;
         public string modpackVersion;
         public string name;
         public string location;
         public bool includeOptions;
 
-        public SettingData()
-        { }
+        public SettingData () { }
 
-        public SettingData(string MinecraftVersion, string ModpackVersion, string Name, string Location, bool IncludeOptions)
-        {
+        public SettingData (string MinecraftVersion, string ModpackVersion, string Name, string Location, bool IncludeOptions) {
             minecraftVersion = MinecraftVersion;
             modpackVersion = ModpackVersion;
             name = Name;
